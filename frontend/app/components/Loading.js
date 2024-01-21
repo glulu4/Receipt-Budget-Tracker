@@ -8,9 +8,9 @@ function Loading({ navigation, route }) {
     // const IP = '10.0.0.155'; // home 
     // const IP = '10.0.0.153'; // aba 
 
-    // const IP = '192.168.5.122' // kennet 
+    const IP = '192.168.5.122' // kennet 
     // const IP = '10.5.40.176' // cathy
-    const IP = '10.215.231.46' // panera 
+    // const IP = '10.215.231.46' // panera 
 
     const startUploadSession = async () => {
         const response = await fetch(`http://${IP}:5001/start-upload-session`, {

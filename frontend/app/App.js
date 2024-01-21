@@ -38,7 +38,10 @@ function App() {
         return (
             <HomeStack.Navigator screenOptions={{ headerShown: false }}>
                 <HomeStack.Screen name="HomePage" component={HomePage} />
-                {/* other screens in the home stack */}
+                <HomeStack.Screen name="Receipts" component={Receipt} />
+                <HomeStack.Screen name="Camera-Page" component={CameraPage} />
+                <HomeStack.Screen name="Loading-Page" component={Loading} />
+                <HomeStack.Screen name="DataDisplayPage" component={DataDisplay} />
             </HomeStack.Navigator>
         );
     }
