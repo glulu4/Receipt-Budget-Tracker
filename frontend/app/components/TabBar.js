@@ -2,9 +2,12 @@ import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarComponent from './TabBarComponent';
+import { useTabBarVisibility } from './TabBarVisibilityContext';
 
 const TabBar = ({ state, navigation, descriptors }) => {
 
+    const { isTabBarVisible } = useTabBarVisibility();
+    const { setIsTabBarVisible } = useTabBarVisibility();
 
     const styles = StyleSheet.create({
         tabBarStyle: {
@@ -31,13 +34,17 @@ const TabBar = ({ state, navigation, descriptors }) => {
     });
 
     return (
-        <View style={styles.tabBarStyle}>
-            <TabBarComponent
-                state={state}
-                navigation={navigation}
-                descriptors={descriptors}
-            />
-        </View>
+
+        <>
+            {isTabBarVisible && (<View style={styles.tabBarStyle}>
+                <TabBarComponent
+                    state={state}
+                    navigation={navigation}
+                    descriptors={descriptors}
+                />
+            </View>)}
+        </>
+
     );
 };
 

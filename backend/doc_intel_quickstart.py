@@ -60,9 +60,9 @@ def analyze_receipts(image_data, new_receipt):
     all_receipts_data = []  # List to store data of all receipts
 
     for idx, receipt in enumerate(receipts.documents):
-        print("&" * 60)
-        print( receipt )
-        print("&" * 60)
+        # print("&" * 60)
+        # print( receipt )
+        # print("&" * 60)
 
         print(f"--------Analysis of receipt #{idx + 1}--------")
         receipt_data = {"ReceiptNumber": idx + 1}

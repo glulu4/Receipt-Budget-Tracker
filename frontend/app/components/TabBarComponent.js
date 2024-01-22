@@ -1,5 +1,5 @@
-import { Dimensions, Pressable, StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
+import { Dimensions, Pressable, StyleSheet, TouchableOpacity, Text, Modal, TouchableWithoutFeedback, View, SafeAreaView, Image } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
 import Animated, {
     runOnUI,
     useAnimatedStyle,
@@ -7,42 +7,122 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 
-// import { AntDesign, Ionicons } from 'react-native-vector-icons';
-// import AntDesign from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+// import FontAwesome from 'react-native-vetcor-icons/FontAwesome'
+import * as ImagePicker from 'react-native-image-picker';
+import { TapGesture } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
+import { useCameraPermission, Camera } from 'react-native-vision-camera';
+
+import { useTabBarVisibility } from './TabBarVisibilityContext';
+import cam from '../assets/camera.png';
+import img from '../assets/image.jpg';
+
+const ImagePickerModal = ({ isVisible, onClose, onImageLibraryPress, onCameraPress }) => {
+
+    const styles = StyleSheet.create({
+        modal: {
+            justifyContent: 'flex-end',
+            margin: 0,
+            height: 10
+        },
+        buttonIcon: {
+            width: 30,
+            height: 30,
+            margin: 10,
+        },
+        buttons: {
+            backgroundColor: 'white',
+            flexDirection: 'row',
+            borderTopRightRadius: 30,
+            borderTopLeftRadius: 30,
+        },
+        button: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        buttonText: {
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        centeredView: {
+            flex: 1,
+            justifyContent: 'flex-end', // Align content to the bottom
+            alignItems: 'center',
+        },
+    });
+    return (
 
 
-export const routes = {
-    home: { name: 'Home', icon: 'home', type: 'AntDesign' },
-    feed: { name: 'Profile', icon: 'receipt-outline', type: 'Ionicons' },
-    profile: { name: 'Settings', icon: 'user', type: 'AntDesign' },
-    settings: { name: 'Monthly', icon: 'settings', type: 'AntDesign' },
-};
+
+        <Modal
+            animationType="slide"
+            transparent={true}
+            isVisible={isVisible}
+            onBackButtonPress={onClose}
+            onBackdropPress={onClose}
+        >
+            <TouchableWithoutFeedback onPress={() => {
+
+                onClose();
+
+            }}>
+                <View style={styles.centeredView}>
+                    <SafeAreaView style={styles.buttons}>
+                        <Pressable style={styles.button} onPress={onImageLibraryPress}>
+                            <Image style={styles.buttonIcon} source={img} />
+                            <Text style={styles.buttonText}>Library</Text>
+                        </Pressable>
+                        <Pressable style={styles.button} onPress={onCameraPress}>
+                            <Image style={styles.buttonIcon} source={cam} />
+                            <Text style={styles.buttonText}>Camera</Text>
+                        </Pressable>
+                    </SafeAreaView>
+                </View>
+            </TouchableWithoutFeedback>
+        </Modal>
+
+    );
+}
+
+
+
+
 
 const TabBarComponent = ({ state, navigation, descriptors }) => {
 
     
+    const [isImagePickerVisible, setIsImagePickerVisible] = useState(false);
+    const [pickerResponse, setPickerResponse] = useState(null);
 
-    // console.log("icon", Icon);
+    const [imageArray, setImageArray] = useState([]);
+
+
+    const { isTabBarVisible } = useTabBarVisibility();
+    const { setIsTabBarVisible } = useTabBarVisibility();
+
+
 
 
     const { width } = Dimensions.get('window');
-
-    // 20 on each side for absolute positioning of the tab bar
-    // 20 on each side for the internal padding
     const TAB_WIDTH = (width - 40 * 2) / 4;
-
     const translateX = useSharedValue(0);
     const focusedTab = state.index;
-
     const handleAnimate = (index) => {
         'worklet';
         translateX.value = withTiming(index * TAB_WIDTH, {
-            duration: 1000,
+            duration: 500,
         });
     };
     useEffect(() => {
         runOnUI(handleAnimate)(focusedTab);
     }, [focusedTab]);
+
+
+
+
 
     const rnStyle = useAnimatedStyle(() => {
         return {
@@ -50,11 +130,14 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
         };
     });
 
+    const center =( Dimensions.get('window').width) / 2
+
+
     const styles = StyleSheet.create({
         container: {
             width: TAB_WIDTH,
             height: 40,
-            backgroundColor: 'blue',
+            backgroundColor: 'pink',
             zIndex: 0,
             position: 'absolute',
             marginHorizontal: 20,
@@ -65,94 +148,201 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
+
+        scanButton: {
+            position: 'absolute',
+            bottom:35, // Adjust this value as needed
+            right: center-50,
+
+            width: 60, // Diameter of the circle
+            height: 60, // Diameter of the circle
+            borderRadius: 30, // Half of width/height to make it a circle
+            backgroundColor: 'rgb(247, 90, 108)', // Replace with your desired color
+            justifyContent: 'center',
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
+            elevation: 5,
+        },
     });
 
     const renderIcon = (name, isFocused) => {
-
-
-
-        const color = isFocused ? '#A9A9A9' : 'black';
+        const color = isFocused ? 'black' : 'black';
         const size = 24;
-        const i = <AntDesign name="home" type="AntDesign" size={30} color="#900" /> // Defaults to regular
-        console.log(i);
         switch (name) {
             
             case 'settings':
-                return i;
+                return <Ionicons name='settings-outline' size={size} color={color}></Ionicons>;
             case 'monthly':
-                return i;
+                return <Ionicons name='receipt-outline' size={size} color={color}></Ionicons>;            
             case 'profile':
-                return i;
+                return <AntDesign name='user' size={size} color={color} ></AntDesign>;
             case 'home':
-                return i;
+                return <AntDesign name='home' size={size} color={color} ></AntDesign>;
             default:
                 return null;
         }
     };
 
-    return (
-        <>
-            <Animated.View style={[styles.container, rnStyle]} />
-            {state.routes.map((route, index) => {
-                console.log(route);
-                const { options } = descriptors[route.key];
+    const onImageLibraryPress = () => {
+        const options = {
+            selectionLimit: 3,
+            mediaType: 'photo',
+            includeBase64: false,
+            quality:0.6,
+        };
 
-                const label =
-                    options.tabBarLabel !== undefined
-                        ? options.tabBarLabel
-                        : options.title !== undefined
-                            ? options.title
-                            : route.name;
+        ImagePicker.launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('Image picker error: ', response.error);
+            } else {
+                if (response.assets && response.assets.length > 0) {
+                    // Extract URIs from all selected images
+                    const imageUris = response.assets.map(asset => asset.uri);
+                    setImageArray(imageUris); // Assuming setSelectedImages can handle an array of URIs
+                    console.log(imageUris);
+
+                    const photos = imageUris.map( (photo, index ) => {
+                        return {
+                            "path": photo.substring('file://'.length)
+                        }
+
+                    })
+                    setIsImagePickerVisible(false);
+                    setIsTabBarVisible(false);
+                    navigation.navigate("Loading-Page", { photos: photos })
+
+                }
+            }
+        });
+        // ImagePicker.launchImageLibrary(options, setPickerResponse);
+        // setPickerResponse(false);
+
+        // ImagePicker.launchImageLibrary(options, (response) => {
+        //     setPickerResponse(response);
+        //     if (response) {
+        //         const imageArray = [];
+
+        //         pickerResponse?.assets?.forEach(asset => {
+        //             const uri = asset.uri;
+        //             imageArray.push(uri);
+        //         });
+
+        //         console.log(imageArray);
+
+        //         
+
+        //     }
+        // });
+
+    };
+
+ 
 
 
 
-                const isFocused = (state.index === index);
 
-                const onPress = () => {
-                    const event = navigation.emit({
-                        type: 'tabPress',
-                        target: route.key,
-                        canPreventDefault: true,
-                    });
+    // set images here
 
-                    if (!isFocused && !event.defaultPrevented) {
-                        navigation.navigate({
-                            name: route.name,
-                            merge: true,
-                            params: {},
-                        });
-                    }
-                };
+    // console.log("logg", imageArray);
 
-                const onLongPress = () => {
-                    navigation.emit({
-                        type: 'tabLongPress',
-                        target: route.key,
-                    });
-                };
-                const routeName = route.name.toLowerCase();
+    async function getCameraPermission() {
+            const permission = await Camera.requestCameraPermission();
+            console.log(`Camera permission status: ${permission}`);
 
-                console.log("routeName", routeName);
-                // const icon = routes[routeName]?.icon;
-                return (
-                    <Pressable
-                        key={`route-${index}`}
-                        accessibilityRole="button"
-                        accessibilityState={isFocused ? { selected: true } : {}}
-                        
-                        accessibilityLabel={options.tabBarAccessibilityLabel}
-                        testID={options.tabBarTestID}
+            if (permission === 'granted') {
+                setIsImagePickerVisible(false);
+                setIsTabBarVisible(false);
 
-                        onPress={onPress}
-                        onLongPress={onLongPress}
-                        style={styles.item}
-                    >
-                        {/* {<AntDesign name="telescope-outline" size={30} color="pink" /> } */}
-                        {/* {renderIcon(routeName, isFocused)} */}
+                navigation.navigate("Camera-Page");
+            }
 
-                    </Pressable>
+            if (permission === 'denied') {
+                Alert.alert(
+                    "Permission Required",
+                    "This app needs camera permission to function. Please enable it in the settings.",
+                    [
+                        { text: "Cancel", style: "cancel" },
+                        { text: "Open Settings", onPress: () => Linking.openSettings() }
+                    ]
                 );
-            })}
+            }
+        }
+
+    return (
+        
+        <>
+            {isTabBarVisible &&  (<>
+                <Animated.View style={[styles.container, rnStyle]} />
+                {state.routes.map((route, index) => {
+                    const { options } = descriptors[route.key];
+
+
+
+                    const isFocused = (state.index === index);
+
+                    const onPress = () => {
+                        const event = navigation.emit({
+                            type: 'tabPress',
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
+
+                        if (!isFocused && !event.defaultPrevented) {
+                            navigation.navigate({
+                                name: route.name,
+                                merge: true,
+                                params: {},
+                            });
+                        }
+                    };
+
+                    const onLongPress = () => {
+                        navigation.emit({
+                            type: 'tabLongPress',
+                            target: route.key,
+                        });
+                    };
+                    const routeName = route.name.toLowerCase();
+                    return (
+                        <Pressable
+                            key={`route-${index}`}
+                            accessibilityRole="button"
+                            accessibilityState={isFocused ? { selected: true } : {}}
+
+                            accessibilityLabel={options.tabBarAccessibilityLabel}
+                            testID={options.tabBarTestID}
+
+                            onPress={onPress}
+                            onLongPress={onLongPress}
+                            style={styles.item}
+                        >
+                            {/* {<AntDesign name="telescope-outline" size={30} color="pink" /> } */}
+                            {renderIcon(routeName, isFocused)}
+                            {/* <Icon name="home" size={30} color="#000" /> */}
+
+                        </Pressable>
+                    );
+                })}
+                <TouchableOpacity style={styles.scanButton} onPress={() => setIsImagePickerVisible(true)} >
+                    {/* <Ionicons name='receipt-outline' size={24} color="black"></Ionicons> */}
+                    <MaterialIcons name='receipt' size={26} color="white"></MaterialIcons>
+                    
+
+                </TouchableOpacity>
+        </>)}
+  
+
+            {isImagePickerVisible && (<ImagePickerModal
+                isVisible={isImagePickerVisible}
+                onClose={() => setIsImagePickerVisible(false)}
+                onImageLibraryPress={onImageLibraryPress}
+                onCameraPress={getCameraPermission}
+            />)}
         </>
     );
 };

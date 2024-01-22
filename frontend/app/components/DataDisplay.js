@@ -1,4 +1,5 @@
 import React, { useState, useEffect} from 'react';
+import { useTabBarVisibility } from './TabBarVisibilityContext';
 
 import { 
     View, 
@@ -168,258 +169,38 @@ const EditModal = ({ isVisible, onClose, onSave, item }) => {
 };
 
 
-export default function DataDisplay({ navigation, route }) {
+export default function DataDisplay({ navigation, route}) {
 
     const r = route.params?.receiptData;
 
-    // console.log(receiptData);
+    let receipt=null;
+    for (let item of r){
+        if ( !item.message ){
+            receipt= item
+        }
+    }
+    // if ( r.length > 1){
+    //     receipt = r[1];
+    // }
+    // else{
+    //     receipt = r[0];
+    // }
 
-    // const r = [
-    //     {
-    //         "date": "2024-01-01",
-    //         "items": [
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "FAGE",
-    //                 "id_": 1,
-    //                 "item_size": "N/A",
-    //                 "price": 1.49,
-    //                 "quantity": 7,
-    //                 "total_price": 10.43
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "Quest",
-    //                 "id_": 2,
-    //                 "item_size": "N/A",
-    //                 "price": 9.49,
-    //                 "quantity": 1,
-    //                 "total_price": 7.48
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG EGGS",
-    //                 "id_": 3,
-    //                 "item_size": "N/A",
-    //                 "price": 2.59,
-    //                 "quantity": 3,
-    //                 "total_price": 7.77
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "LegendaryFds",
-    //                 "id_": 4,
-    //                 "item_size": "N/A",
-    //                 "price": 9.99,
-    //                 "quantity": 1,
-    //                 "total_price": 7.82
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "HALO TOP",
-    //                 "id_": 5,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 4.69
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "VEGETABLE",
-    //                 "id_": 6,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 3.19
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "SARGENTO",
-    //                 "id_": 7,
-    //                 "item_size": "N/A",
-    //                 "price": 3.49,
-    //                 "quantity": 2,
-    //                 "total_price": 6.98
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "PRETZEL",
-    //                 "id_": 8,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 5.59
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "MORNINGSTAR",
-    //                 "id_": 9,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 4.89
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "KETTLE",
-    //                 "id_": 10,
-    //                 "item_size": "N/A",
-    //                 "price": 4.39,
-    //                 "quantity": 1,
-    //                 "total_price": 3.99
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "LESSEREVIL",
-    //                 "id_": 11,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 5.49
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG CHIPS",
-    //                 "id_": 12,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 3.99
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "NATURE'S",
-    //                 "id_": 13,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 10.49
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "NASOYA VEGET",
-    //                 "id_": 14,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 4.49
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG EGGS",
-    //                 "id_": 15,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 4.99
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG CHEESE",
-    //                 "id_": 16,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 5.79
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG VEGETABLE",
-    //                 "id_": 17,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 1.99
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG TOMATO",
-    //                 "id_": 18,
-    //                 "item_size": "N/A",
-    //                 "price": 2.59,
-    //                 "quantity": 2,
-    //                 "total_price": 5.18
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "GG VEGETABLE",
-    //                 "id_": 19,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 2.19
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "BERRIES",
-    //                 "id_": 20,
-    //                 "item_size": "N/A",
-    //                 "price": 5.99,
-    //                 "quantity": 1,
-    //                 "total_price": 4.79
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "DripDrop",
-    //                 "id_": 21,
-    //                 "item_size": "N/A",
-    //                 "price": 12.99,
-    //                 "quantity": 1,
-    //                 "total_price": 10.17
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "HeroCsmetics",
-    //                 "id_": 22,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 8.99
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "NUUN HYDRATE",
-    //                 "id_": 23,
-    //                 "item_size": "N/A",
-    //                 "price": 6.99,
-    //                 "quantity": 1,
-    //                 "total_price": 5.51
-    //             },
-    //             {
-    //                 "case_size": "N/A",
-    //                 "description": "UP&UP 2CT S",
-    //                 "id_": 24,
-    //                 "item_size": "N/A",
-    //                 "price": 0,
-    //                 "quantity": 1,
-    //                 "total_price": 8.29
-    //             }
-    //         ],
-    //         "merchant_name": "mss Goy bia",
-    //         "pa_tax_paid": false,
-    //         "subtotal": 145.18,
-    //         "total": 146.71,
-    //         "total_tax": 1.53
-    //     }
-    // ]
-    // const r = 
-    const [items, setItems] = useState(r[0].items); // Assuming this will be populated from your data source
+    const [items, setItems] = useState(receipt.items); // Assuming this will be populated from your data source
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
+    const { isTabBarVisible } = useTabBarVisibility();
+    const { setIsTabBarVisible } = useTabBarVisibility();
 
 
-    // const IP = '10.0.0.155'; // home 
-    // const IP = '10.0.0.153'; // aba 
 
-    const IP = '192.168.5.122' // kennet 
-    // const IP = '10.5.40.176' // cathy
-    // const IP = '10.215.231.46' // panera 
+    const IP = route.params.IP;
 
     const submitData = async () => {
 
         let body = {
-            ...r[0], // spread the receipt
+            ...receipt, // spread the receipt
             items: items,
         }
 
@@ -443,6 +224,7 @@ export default function DataDisplay({ navigation, route }) {
         });
 
 
+        setIsTabBarVisible(true);
         navigation.navigate("HomePage")
 
 
@@ -468,6 +250,8 @@ export default function DataDisplay({ navigation, route }) {
     };
 
     const formatDate = (date) => {
+
+        // add try catch
         const dateObj = new Date(date + 'T00:00:00');
         return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(dateObj);
     }
@@ -566,7 +350,7 @@ export default function DataDisplay({ navigation, route }) {
             <FlatList
                 data={items}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id_.toString()}
+                keyExtractor={(item, index) => index.toString()}
                 style={{backgroundColor:'lightgray', 
                 borderRadius:6,
 
@@ -588,22 +372,22 @@ export default function DataDisplay({ navigation, route }) {
             }}>
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Date: </Text>
-                    <Text style={styles.bottomData}>{ formatDate(r[0].date)}</Text>
+                    {/* <Text style={styles.bottomData}>{ formatDate(r[0].date)}</Text> */}
                 </View>
 
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Subtotal: </Text>
-                    <Text style={styles.bottomData}>${r[0].subtotal}</Text>
+                    <Text style={styles.bottomData}>${receipt.subtotal}</Text>
                 </View>
 
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Total Tax: </Text>
-                    <Text style={styles.bottomData}>${r[0].total_tax}</Text>
+                    <Text style={styles.bottomData}>${receipt.total_tax}</Text>
                 </View>
 
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Total: </Text>
-                    <Text style={styles.bottomData}>${r[0].total}</Text>
+                    <Text style={styles.bottomData}>${receipt.total}</Text>
                 </View>
 
                 <TouchableOpacity

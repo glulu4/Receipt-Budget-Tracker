@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { useTabBarVisibility } from './TabBarVisibilityContext';
 
 import RNFS from 'react-native-fs';
 
 function Loading({ navigation, route }) {
     const photos = route.params.photos;
-    // const IP = '10.0.0.155'; // home 
-    // const IP = '10.0.0.153'; // aba 
+    const { isTabBarVisible } = useTabBarVisibility();
+    const { setIsTabBarVisible } = useTabBarVisibility();
 
-    const IP = '192.168.5.122' // kennet 
-    // const IP = '10.5.40.176' // cathy
-    // const IP = '10.215.231.46' // panera 
+    console.log("pjoo", photos );
+
+    const IP = route.params.IP;
 
     const startUploadSession = async () => {
         const response = await fetch(`http://${IP}:5001/start-upload-session`, {
@@ -42,6 +43,7 @@ function Loading({ navigation, route }) {
     const processPhotos = async () => {
         try {
             const sessionId = await startUploadSession();
+            console.log("created id");
             const uploadPromises = photos.map((photo, index) => uploadImage(photo, sessionId, index));
             const results = await Promise.all(uploadPromises);
 
@@ -49,6 +51,7 @@ function Loading({ navigation, route }) {
             navigation.navigate('DataDisplayPage', { receiptData: results });
         } catch (error) {
             console.error('Error:', error);
+            setIsTabBarVisible(true);
             navigation.navigate("HomePage");
         }
     };

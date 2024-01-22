@@ -224,8 +224,7 @@ function HomePage() {
     }, []);
 
 
-    const uri = pickerResponse?.assets && pickerResponse.assets[0].uri;
-    console.log(uri);
+
 
     const uploadImage = () => {
         setVisible(true);
@@ -251,7 +250,7 @@ function HomePage() {
             </View>
 
             
-            <View style={style.buttonContainer}>
+            {/* <View style={style.buttonContainer}>
 
                 <TouchableOpacity
                     style={style.buttonStyle}
@@ -259,13 +258,6 @@ function HomePage() {
                 >
                     <Text style={style.buttonText}>Scan Receipt</Text>
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity
-                    style={style.buttonStyle}
-                    onPress={queryDb}
-                >
-                    <Text style={style.buttonText}>Get Receipt</Text>
-                </TouchableOpacity> */}
 
                 <TouchableOpacity
                     style={style.buttonStyle}
@@ -282,7 +274,7 @@ function HomePage() {
 
                 
 
-            </View>
+            </View> */}
         </View>
     );
 }

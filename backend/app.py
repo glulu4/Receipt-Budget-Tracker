@@ -49,6 +49,7 @@ def upload_image(session_id, index):
 
     receipt = None
     if session_id not in sessions:
+        print("in session")
         return jsonify({'error': 'Invalid session ID'}), 400
 
     image_data = request.data
@@ -70,6 +71,8 @@ def upload_image(session_id, index):
 
         # Optionally, clear the images from the session to free up memory
         del sessions[session_id]['images']
+    else:
+        return jsonify({'message': f'Received {sessions[session_id]["received"]} of {sessions[session_id]["total"]} images'}), 202
 
     return jsonify(receipt.to_dict()), 201
 

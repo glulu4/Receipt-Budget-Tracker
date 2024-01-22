@@ -29,6 +29,8 @@ function CameraPage() {
     // let photoList = [];
 
 
+
+
     useEffect(() => {
         console.log("The photo list has ", photoList.length, " items");
 
@@ -84,7 +86,7 @@ function CameraPage() {
     const goBack = () => {
         setCurrPhoto(null);
         setPhotoList(prevList => []);
-
+        setIsTabBarVisible(true);
         navigation.navigate("HomePage");
     }
 
@@ -192,7 +194,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         justifyContent: 'center',
         width: '100%',
-        top: 0,
+        top: 40,
     },
     buttonContainer: {
         backgroundColor: 'rgba(0,0,0,0.2)',
