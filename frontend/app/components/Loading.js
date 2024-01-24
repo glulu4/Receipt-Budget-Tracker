@@ -1,19 +1,22 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { useTabBarVisibility } from './TabBarVisibilityContext';
+import { useGlobalContext } from './TabBarVisibilityContext';
 
 import RNFS from 'react-native-fs';
 
 function Loading({ navigation, route }) {
     const photos = route.params.photos;
-    const { isTabBarVisible } = useTabBarVisibility();
-    const { setIsTabBarVisible } = useTabBarVisibility();
+    const { isTabBarVisible } = useGlobalContext();
+    const { setIsTabBarVisible } = useGlobalContext();
+
+    const { shouldFetchTotal, setShouldFetchTotal } = useGlobalContext();
 
     console.log("pjoo", photos );
 
     const IP = route.params.IP;
 
     const startUploadSession = async () => {
+        setShouldFetchTotal(true);
         const response = await fetch(`http://${IP}:5001/start-upload-session`, {
             method: 'POST',
             headers: {

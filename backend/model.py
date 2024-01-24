@@ -78,3 +78,31 @@ class Item(db.Model):
         self.case_size = case_size if case_size is not None else None
         self.num_oz = num_oz if num_oz is not None else None
 
+
+
+
+
+# def get_monthly_totals(year=None, month=None):
+#     if year is None or month is None:
+#         current_date = datetime.now()
+#     else:
+#         current_date = datetime(year, month, 1)
+
+#     first_day_of_month = current_date.replace(day=1)
+#     last_day_of_month = current_date.replace(month=current_date.month % 12 + 1, day=1) - timedelta(days=1)
+
+#     query_result = db.session.query(
+#                     func.sum(Receipt.total).label('total_spend'),
+#                     func.sum(Item.num_oz).label('total_ounces')
+#                 )\
+#                 .join(Item, Receipt._id == Item.receipt_id)\
+#                 .filter(Receipt.date >= first_day_of_month, Receipt.date <= last_day_of_month)\
+#                 .one()
+
+#     total_spend = query_result.total_spend if query_result.total_spend is not None else 0
+#     total_ounces = query_result.total_ounces if query_result.total_ounces is not None else 0
+
+#     return {
+#         'total_spend': total_spend,
+#         'total_ounces': total_ounces
+#     }

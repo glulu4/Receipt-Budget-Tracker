@@ -15,7 +15,7 @@ import * as ImagePicker from 'react-native-image-picker';
 import { TapGesture } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
 import { useCameraPermission, Camera } from 'react-native-vision-camera';
 
-import { useTabBarVisibility } from './TabBarVisibilityContext';
+import { useGlobalContext } from './TabBarVisibilityContext';
 import cam from '../assets/camera.png';
 import img from '../assets/image.jpg';
 
@@ -100,8 +100,8 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
     const [imageArray, setImageArray] = useState([]);
 
 
-    const { isTabBarVisible } = useTabBarVisibility();
-    const { setIsTabBarVisible } = useTabBarVisibility();
+    const { isTabBarVisible } = useGlobalContext();
+    const { setIsTabBarVisible } = useGlobalContext();
 
 
 

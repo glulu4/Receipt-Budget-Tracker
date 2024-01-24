@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Camera, useCameraDevices, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 
-
+import { useGlobalContext } from './TabBarVisibilityContext';
 
 function CameraPage() {
     const navigation = useNavigation();
@@ -27,6 +27,8 @@ function CameraPage() {
 
     // resets every render, so need to use state 
     // let photoList = [];
+
+    const { setIsTabBarVisible } = useGlobalContext();
 
 
 

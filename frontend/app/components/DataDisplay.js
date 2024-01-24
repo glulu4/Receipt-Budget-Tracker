@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { useTabBarVisibility } from './TabBarVisibilityContext';
+import { useGlobalContext } from './TabBarVisibilityContext';
 
 import { 
     View, 
@@ -190,8 +190,8 @@ export default function DataDisplay({ navigation, route}) {
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const { isTabBarVisible } = useTabBarVisibility();
-    const { setIsTabBarVisible } = useTabBarVisibility();
+    const { isTabBarVisible } = useGlobalContext();
+    const { setIsTabBarVisible } = useGlobalContext();
 
 
 

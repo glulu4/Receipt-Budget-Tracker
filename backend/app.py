@@ -1,5 +1,6 @@
 import datetime
 from flask import Flask, request, jsonify, make_response
+from sqlalchemy import extract, func
 from flask_cors import CORS
 import os
 import requests
@@ -170,6 +171,76 @@ def get_receipt():
         return make_response("Internal Server Error", 500)  
 
 
+# gets total spend and ounces
+@app.route("/get-current-months-totals",  methods=['GET'])
+def get_totals():
+    total_spent = get_month_total_spend()
+    total_ounces = 0 # replace with function... 
+
+    return jsonify(total_spent=total_spent, total_ounces=total_ounces), 201
+
+
+
+
+def get_month_total_spend(year=None, month=None):
+    if year is None or month is None:
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+    else:
+        current_year = year
+        current_month = month
+
+    # Query to filter receipts from the specified month
+    receipts = ReceiptModel.query.filter(
+        extract('year', ReceiptModel.date) == current_year,
+        extract('month', ReceiptModel.date) == current_month
+    ).all()
+
+    total = sum(receipt.total for receipt in receipts)
+    return total
+
+
+
+def get_current_months_total_spend():
+
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+
+    # Query to filter receipts from the current month
+    this_months_receipts = ReceiptModel.query.filter(
+        extract('year', ReceiptModel.date) == current_year,
+        extract('month', ReceiptModel.date) == current_month
+    ).all()
+
+    total = 0.0
+    for receipt in this_months_receipts:
+        total += receipt.total
+    
+
+    return total
+
+
+def get_current_month_total_ounces():
+    # Get the current date
+    current_date = datetime.now()
+
+    # Get the first and last day of the current month
+    first_day_of_month = current_date.replace(day=1)
+    last_day_of_month = current_date.replace(month=current_date.month % 12 + 1, day=1) - timedelta(days=1)
+
+    # Query to sum the ounces for all items in receipts of the current month
+    total_ounces = db.session.query(func.sum(Item.num_oz))\
+                    .join(Receipt, Receipt._id == Item.receipt_id)\
+                    .filter(Receipt.date >= first_day_of_month, Receipt.date <= last_day_of_month)\
+                    .scalar()
+
+    return total_ounces if total_ounces is not None else 0
+
+
+
+   
+
+  
 
 
 
@@ -220,33 +291,3 @@ if __name__ == '__main__':
     #     print('Initialized the database.')
     app.run(debug=True, host='0.0.0.0', port='5001')
 
-
-
-
-
-
-
-
-
-
-# def taggun_scan_receipt(image):
-#     url = "https://api.taggun.io/api/receipt/v1/verbose/file"
-
-#     payload = "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"refresh\"\r\n\r\nfalse\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"incognito\"\r\n\r\nfalse\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"extractTime\"\r\n\r\nfalse\r\n-----011000010111000001101001--\r\n\r\n"
-#     headers = {
-#         "accept": "application/json",
-#         # "content-type": "multipart/form-data; boundary=---011000010111000001101001",
-#         "apikey": "bd361ef0a5ad11ee8c195973cf71cc11"
-#     }
-
-#     files = {
-#         'file': ('receipt.jpg', image, 'image/jpg'),  
-#         'refresh': (None, 'false'),
-#         'incognito': (None, 'false'),
-#         'extractTime': (None, 'false')
-#     }
-
-#     response = requests.post(url, headers=headers, files=files)
-#     print(response.json())
-#     return response.json()  # Return the parsed JSON response
-    

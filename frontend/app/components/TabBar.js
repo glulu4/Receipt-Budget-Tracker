@@ -2,12 +2,12 @@ import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import TabBarComponent from './TabBarComponent';
-import { useTabBarVisibility } from './TabBarVisibilityContext';
+import { useGlobalContext } from './TabBarVisibilityContext';
 
 const TabBar = ({ state, navigation, descriptors }) => {
 
-    const { isTabBarVisible } = useTabBarVisibility();
-    const { setIsTabBarVisible } = useTabBarVisibility();
+    const { isTabBarVisible } = useGlobalContext();
+    const { setIsTabBarVisible } = useGlobalContext();
 
     const styles = StyleSheet.create({
         tabBarStyle: {

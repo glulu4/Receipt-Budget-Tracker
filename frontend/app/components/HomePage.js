@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import { 
     View, 
@@ -13,96 +13,22 @@ import {
     Image, 
     TouchableWithoutFeedback
 } from 'react-native';
-import CameraPage from './CameraPage';
 import { useNavigation } from '@react-navigation/native';
-
-import { useCameraPermission, Camera } from 'react-native-vision-camera';
-import * as ImagePicker from 'react-native-image-picker';
-
-import cam from '../assets/camera.png';
-import img from '../assets/image.jpg';
+import { useGlobalContext } from './TabBarVisibilityContext';
 
 
 
 
-const ImagePickerModal = ({isVisible, onClose, onImageLibraryPress,}) => {
+function HomePage({route}) {
 
-    const styles = StyleSheet.create({
-        modal: {
-            justifyContent: 'flex-end',
-            margin: 0,
-            height:10
-        },
-        buttonIcon: {
-            width: 30,
-            height: 30,
-            margin: 10,
-        },
-        buttons: {
-            backgroundColor: 'white',
-            flexDirection: 'row',
-            borderTopRightRadius: 30,
-            borderTopLeftRadius: 30,
-        },
-        button: {
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        buttonText: {
-            fontSize: 14,
-            fontWeight: '600',
-        },
-        centeredView: {
-            flex: 1,
-            justifyContent: 'flex-end', // Align content to the bottom
-            alignItems: 'center',
-        },
-    });
-    return (
-       
+    const { shouldFetchTotal, setShouldFetchTotal } = useGlobalContext()
+    const [totalSpend, setTotalSpend] = useState(null)
 
-       
-        <Modal
-            animationType="slide"
-            transparent={true}
-            isVisible={isVisible}
-            onBackButtonPress={onClose}
-            onBackdropPress={onClose}
-            >
-            <TouchableWithoutFeedback onPress={() => {
+    const IP = route.params.IP;
 
-                onClose();
 
-            }}>
-            <View style={styles.centeredView}>
-            <SafeAreaView style={styles.buttons}>
-                <Pressable style={styles.button} onPress={onImageLibraryPress}>
-                    <Image style={styles.buttonIcon} source={img} />
-                    <Text style={styles.buttonText}>Library</Text>
-                </Pressable>
-                <Pressable style={styles.button}>
-                    <Image style={styles.buttonIcon} source={cam} />
-                    <Text style={styles.buttonText}>Camera</Text>
-                </Pressable>
-            </SafeAreaView>
-                </View>
-            </TouchableWithoutFeedback>
-        </Modal>
-       
-    );
-}
 
-function HomePage() {
-    // const IP = '10.0.0.155'; // home 
-    // const IP = '10.0.0.153'; // aba 
 
-    // const IP = '192.168.5.122' // kennet 
-    // const IP = '10.5.40.176' // cathy
-    const IP = '10.215.231.46' // panera 
-
-    const [pickerResponse, setPickerResponse] = useState(null);
-    const [visible, setVisible] = useState(false);
     const formatDate = () => {
         const date = new Date().toDateString()
 
@@ -124,32 +50,9 @@ function HomePage() {
         return newDate;
     }
 
-
-
-
-
-
     const navigation = useNavigation();
 
-    async function getPermission() {
-        const permission = await Camera.requestCameraPermission();
-        console.log(`Camera permission status: ${permission}`);
 
-        if (permission === 'granted') {
-            navigation.navigate("Camera-Page");
-        }
-
-        if (permission === 'denied') {
-            Alert.alert(
-                "Permission Required",
-                "This app needs camera permission to function. Please enable it in the settings.",
-                [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Open Settings", onPress: () => Linking.openSettings() }
-                ]
-            );
-        }
-    }
 
     const style = StyleSheet.create({
         container: {
@@ -190,11 +93,18 @@ function HomePage() {
     });
 
 
+    useEffect( () => {
+        getCurrentMonthsTotalSpend()
+
+    },[])
+    // useEffect(() => {
+    //     if (shouldFetchTotal) {
+    //         getCurrentMonthsTotalSpend();
+    //         setShouldFetchTotal(false); // Reset the trigger
+    //     }
+    // }, [shouldFetchTotal]);
+
     const queryDb = async () => {
-
-
-
-
         fetch(`http://${IP}:5001/get-receipt`)
             .then(response => {
                 if (!response.ok) {
@@ -208,27 +118,45 @@ function HomePage() {
                 // Here you can do something with the received data
             })
             .catch(error => {
-                console.error('There was an error fetching the receipts:', error);
+                console.error('There was an error fetching the total', error);
             });
         
     }
 
-    const onImageLibraryPress = useCallback(() => {
-        const options = {
-            selectionLimit: 3,
-            mediaType: 'photo',
-            includeBase64: false,
-        };
-        ImagePicker.launchImageLibrary(options, setPickerResponse);
-        setVisible(false);
-    }, []);
+    const getCurrentMonthsTotalSpend = async () => {
+
+        data = null;
+
+        fetch(`http://${IP}:5001/get-current-months-totals`)
+        .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${ response.status }`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Total:', data);
+
+                console.log(data);
+                setTotalSpend(data.total_spent)
+
+            })
+            .catch(error => {
+                console.error('There was an error fetching the receipts:', error);
+            });
 
 
+            if ( data ) return data;
+            
 
-
-    const uploadImage = () => {
-        setVisible(true);
+             
     }
+
+    const formatTotalSpend = () => {
+        
+    }
+
+
 
     return (
         <View style={style.container}>
@@ -247,34 +175,16 @@ function HomePage() {
                     fontSize: 30,
                     fontWeight: '300',
                 }}>{formatDate()}</Text>
+
+                <View>
+                    <Text>${totalSpend}</Text>
+                </View>
             </View>
 
+
+
             
-            {/* <View style={style.buttonContainer}>
 
-                <TouchableOpacity
-                    style={style.buttonStyle}
-                    onPress={getPermission}
-                >
-                    <Text style={style.buttonText}>Scan Receipt</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={style.buttonStyle}
-                    onPress={uploadImage}
-                >
-                    <Text style={style.buttonText}>Upload Image</Text>
-                </TouchableOpacity>
-
-                { visible && (<ImagePickerModal
-                    isVisible={visible}
-                    onClose={() => setVisible(false)}
-                    onImageLibraryPress={onImageLibraryPress}
-                />)}
-
-                
-
-            </View> */}
         </View>
     );
 }

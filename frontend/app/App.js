@@ -25,8 +25,8 @@ function App() {
     // const ip = '10.0.0.155'; // home 
     // const ip = '10.0.0.153'; // aba 
 
-    // const ip = '192.168.5.122' // kennet 
-    const ip = '10.215.131.124' // cathy
+    const ip = '192.168.5.122' // kennet 
+    // const ip = '10.215.131.124' // cathy
     // const ip = '10.215.231.46' // panera 
 
     const Stack = createNativeStackNavigator();
@@ -41,7 +41,7 @@ function App() {
     function HomeStackScreen() {
         return (
             <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-                <HomeStack.Screen name="HomePage" component={HomePage} />
+                <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }}/>
                 <HomeStack.Screen name="Receipts" component={Receipt} />
 
                 <HomeStack.Screen name="Camera-Page" component={CameraPage} />
