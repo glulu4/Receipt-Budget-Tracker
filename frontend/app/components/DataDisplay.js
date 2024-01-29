@@ -1,12 +1,12 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from './TabBarVisibilityContext';
 
-import { 
-    View, 
+import {
+    View,
     Text,
-    SafeAreaView, 
-    StyleSheet, 
-    FlatList, 
+    SafeAreaView,
+    StyleSheet,
+    FlatList,
     TextInput,
     TouchableOpacity,
     Modal,
@@ -16,6 +16,10 @@ import {
     Keyboard,
 
 } from 'react-native';
+
+import SwipeRow from '@nghinv/react-native-swipe-row';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 const EditModal = ({ isVisible, onClose, onSave, item }) => {
     // Local states for each field in the modal
@@ -34,7 +38,7 @@ const EditModal = ({ isVisible, onClose, onSave, item }) => {
             description,
             quantity: parseInt(quantity, 10), // Convert quantity back to a number
             num_oz: parseInt(numOz, 10),
-            case_size: parseInt(caseSize,10),
+            case_size: parseInt(caseSize, 10),
         };
 
         // Call the onSave function passed from the parent component
@@ -59,17 +63,17 @@ const EditModal = ({ isVisible, onClose, onSave, item }) => {
             justifyContent: "center",
             alignItems: "center",
             marginTop: 22,
-            
+
         },
         modalView: {
 
             margin: 20,
-            marginTop:130,
+            marginTop: 130,
             backgroundColor: "white",
             borderRadius: 20,
             padding: 35,
             alignItems: "center",
-            justifyContent:'center',
+            justifyContent: 'center',
             shadowColor: "#000",
             shadowOffset: {
                 width: 0,
@@ -95,102 +99,173 @@ const EditModal = ({ isVisible, onClose, onSave, item }) => {
     })
 
     return (
-        
+
         <Modal
             animationType="slide"
             transparent={true}
             visible={isVisible}
             onRequestClose={onClose}
-            >
+        >
 
             <TouchableWithoutFeedback onPress={() => {
-                 
+
                 onClose();
-               
+
             }}>
-            
-            <View style={styles.centeredView}>
-                <ScrollView scrollEnabled={false}>
-                <View style={styles.modalView}>
-                        
-                    <View>
-                           
-                        <Text style={styles.modalTexHeader}>Edit {item.description}</Text>
-                           
 
-                        
-                        <Text>Description:</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setDescription}
-                            value={description}
-                            placeholder="Description"
-                        />
+                <View style={styles.centeredView}>
+                    <ScrollView scrollEnabled={false}>
+                        <View style={styles.modalView}>
 
-                        <Text>Quantity:</Text>
-                            <TextInput
-                                style={styles.modalInput}
-                                onChangeText={setQuantity}
-                                value={quantity}
-                                keyboardType="numeric"
-                                placeholder="Quantity"
-                            />
-                        
+                            <View>
+
+                                <Text style={styles.modalTexHeader}>Edit {item.description}</Text>
 
 
 
+                                <Text>Description:</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    onChangeText={setDescription}
+                                    value={description}
+                                    placeholder="Description"
+                                />
 
-                        <Text>Item Size Ounces:</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setNumOz}
-                            value={numOz}
-                            keyboardType="numeric"
-                            placeholder="Item Size"
-                        />
+                                <Text>Quantity:</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    onChangeText={setQuantity}
+                                    value={quantity}
+                                    keyboardType="numeric"
+                                    placeholder="Quantity"
+                                />
 
-                        <Text>Case Size:</Text>
-                        <TextInput
-                            style={styles.modalInput}
-                            onChangeText={setCaseSize}
-                            value={caseSize}
-                            keyboardType="numeric"
-                            placeholder="Case Size"
-                        />
-                        
-                        <Button title="Save" onPress={handleSave} />
-                       
-                    </View>
+
+
+
+
+                                <Text>Item Size Ounces:</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    onChangeText={setNumOz}
+                                    value={numOz}
+                                    keyboardType="numeric"
+                                    placeholder="Item Size"
+                                />
+
+                                <Text>Case Size:</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    onChangeText={setCaseSize}
+                                    value={caseSize}
+                                    keyboardType="numeric"
+                                    placeholder="Case Size"
+                                />
+
+                                <Button title="Save" onPress={handleSave} />
+
+                            </View>
+                        </View>
+                    </ScrollView>
                 </View>
-                </ScrollView>
-            </View>
-               
+
             </TouchableWithoutFeedback>
         </Modal>
-       
+
     );
 };
 
 
-export default function DataDisplay({ navigation, route}) {
+export default function DataDisplay({ navigation, route }) {
+
+    let t = {
+        "date": "2024-01-01",
+        "items": [
+            {
+                "case_size": null,
+                "category": null,
+                "description": "Fage",
+                "id_": 1,
+                "num_oz": null,
+                "price": 1.49,
+                "quantity": 7,
+                "total_price": 10.43
+            },
+            {
+                "case_size": null,
+                "category": null,
+                "description": "Quest",
+                "id_": 2,
+                "num_oz": null,
+                "price": 9.49,
+                "quantity": 1,
+                "total_price": 7.48
+            },
+            {
+                "case_size": null,
+                "category": null,
+                "description": "Gg eggs",
+                "id_": 3,
+                "num_oz": null,
+                "price": 2.59,
+                "quantity": 3,
+                "total_price": 7.77
+            },
+            {
+                "case_size": null,
+                "category": null,
+                "description": "Legendaryfds",
+                "id_": 4,
+                "num_oz": null,
+                "price": 9.99,
+                "quantity": 1,
+                "total_price": 7.82
+            },
+            {
+                "case_size": null,
+                "category": null,
+                "description": "Halo top",
+                "id_": 5,
+                "num_oz": null,
+                "price": 0,
+                "quantity": 1,
+                "total_price": 4.69
+            },
+            // ... (additional items continue in the same format)
+        ],
+        "merchant_name": null,
+        "pa_tax_paid": false,
+        "subtotal": 145.18,
+        "total": 146.71,
+        "total_tax": 1.53
+    }
+
 
     const [errorMsg, setErrorMsg] = useState("")
     const [drinkError, setDrinkError] = useState(false)
 
-    const r = route.params?.receiptData;
+    // const r = route.params?.receiptData;
 
-    let receipt=null;
-    for (let item of r){
-        if ( !item.message ){
-            receipt= item
-        }
-    }
+    // let receipt = null;
+    // if (r) {
+
+    //     for (let item of r) {
+    //         if (!item.message) {
+    //             receipt = item
+    //         }
+    //     }
+    // }
+    // else {
+    //     receipt = t
+    // }
     // if ( r.length > 1){
     //     receipt = r[1];
     // }
     // else{
     //     receipt = r[0];
     // }
+
+    receipt = t
 
     const [items, setItems] = useState(receipt.items); // Assuming this will be populated from your data source
     const [isModalVisible, setModalVisible] = useState(false);
@@ -206,7 +281,7 @@ export default function DataDisplay({ navigation, route}) {
     const submitData = async () => {
 
         for (let itm of items) {
-            if (itm.category === "tax-drink"){
+            if (itm.category === "tax-drink") {
                 if (!itm.quantity) {
                     setDrinkError(true)
                     setErrorMsg(`${itm.description} needs a quantity`)
@@ -230,9 +305,9 @@ export default function DataDisplay({ navigation, route}) {
             items: items,
         }
 
-  
 
-        console.log("body", body);
+
+        // console.log("body", body);
 
 
         fetch(`http://${IP}:5001/add_to_db`, {
@@ -245,17 +320,17 @@ export default function DataDisplay({ navigation, route}) {
             // console.log(response)
             return response.json();
         })
-        // needed because above then returns
-        .then((result) => {
-            console.log(result);
-        })
-        .catch(() => {
-            console.log("Error posting receipt");
-        });
+            // needed because above then returns
+            .then((result) => {
+                console.log(result);
+            })
+            .catch(() => {
+                console.log("Error posting receipt");
+            });
 
 
         setIsTabBarVisible(true);
-        navigation.navigate("HomePage")
+        navigation.navigate("HomePage", { renderMessage: true})
 
 
     };
@@ -281,48 +356,48 @@ export default function DataDisplay({ navigation, route}) {
 
     const formatDate = (date) => {
 
-        if ( date ){
+        if (date) {
             const dateObj = new Date(date + 'T00:00:00');
             return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(dateObj);
 
         }
-        else{
+        else {
             return "Need to fix lol "
         }
 
         // add try catch
     }
-    
+
 
     const styles = StyleSheet.create({
         container: {
-            flex:1, 
-            margin:10,
+            flex: 1,
+            margin: 10,
 
         },
-        headerText:{
-            alignSelf:'center',
-            fontSize:60,
+        headerText: {
+            alignSelf: 'center',
+            fontSize: 60,
             zIndex: 1, // Add this line
-            fontWeight:'500',
+            fontWeight: '500',
         },
-        rowStyle:{
-            display:'flex',
-            flexDirection:'row',
-            justifyContent:'space-between',
-            gap:10,
+        rowStyle: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: 20,
             padding: 20,
-            borderBottomWidth: 0.5,
-            borderBottomColor: '#cccccc',
-            
+            borderBottomWidth: 3,
+            borderBottomColor: 'white',
+
         },
-        item:{
-            margin:10,
-            fontSize:20
+        item: {
+            margin: 10,
+            fontSize: 20
         },
-        itemHeader:{
-            fontSize:30,
-            marginTop:40,
+        itemHeader: {
+            fontSize: 30,
+            marginTop: 40,
             margin: 10,
 
         },
@@ -332,17 +407,17 @@ export default function DataDisplay({ navigation, route}) {
             alignItems: "center",
             marginTop: 22
         },
-       
-        bottomRow: { 
-            flexDirection: 'row', 
-            justifyContent:'space-between',
+
+        bottomRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
             gap: 50,
         },
-        bottomPrefix:{
-            fontWeight:'700',
-            fontSize:25
+        bottomPrefix: {
+            fontWeight: '700',
+            fontSize: 25
         },
-        bottomData: { 
+        bottomData: {
             fontSize: 25,
         },
         buttonStyle: {
@@ -364,14 +439,42 @@ export default function DataDisplay({ navigation, route}) {
         },
 
     })
+    const deleteRow = (item) => {
+        const updatedItems = items.filter((currItem) => currItem.id_ !== item.id_);
+        setItems(updatedItems);
+    }
 
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => openEditModal(item)}>
-            <View style={styles.rowStyle}>
-                <Text style={styles.item}>{String(item.quantity)}</Text>
-                <Text style={styles.item}>{item.description}</Text>
-            </View>
+
+            <SwipeRow
+                right={[
+
+                    {
+                        title: 'Delete',
+                        backgroundColor: 'tomato',
+                        icon: { name: 'delete' },
+                        onPress: () => deleteRow(item),
+                    },
+                ]}
+                onSwipe={(swipeData) => {
+                    console.log("swipeData", swipeData);
+
+                }}
+                style={{ marginVertical: 1 }}            >
+               
+
+
+                    <View style={styles.rowStyle}>
+                        <Text style={styles.item}>{String(item.quantity)}</Text>
+                        <Text style={styles.item}>{item.description}</Text>
+                    </View>
+               
+            </SwipeRow>
         </TouchableOpacity>
+
+           
+        
     );
 
     return (
@@ -383,17 +486,22 @@ export default function DataDisplay({ navigation, route}) {
             <View style={styles.rowStyle}>
                 <Text style={styles.itemHeader}>Qty</Text>
                 <Text style={styles.itemHeader}>Description</Text>
-            </View>            
+            </View>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+
             <FlatList
                 data={items}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
-                style={{backgroundColor:'lightgray', 
-                borderRadius:6,
+                style={{
+                    backgroundColor: 'lightgray',
+                    borderRadius: 6,
 
-            
-            }}
+
+                }}
             />
+            </GestureHandlerRootView>
+
             {isModalVisible && (
                 <EditModal
                     isVisible={isModalVisible}
@@ -403,13 +511,13 @@ export default function DataDisplay({ navigation, route}) {
                 />
             )}
             <View style={{
-                paddingTop:80,
-                marginBottom:30,
-                alignSelf:'center'
+                paddingTop: 80,
+                marginBottom: 30,
+                alignSelf: 'center'
             }}>
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Date: </Text>
-                    <Text style={styles.bottomData}>{ formatDate(r[0].date)}</Text>
+                    {/* <Text style={styles.bottomData}>{formatDate(r[0].date)}</Text> */}
                 </View>
 
                 <View style={styles.bottomRow}>
@@ -436,7 +544,7 @@ export default function DataDisplay({ navigation, route}) {
                     <Text style={styles.buttonText}>Next</Text>
                 </TouchableOpacity>
 
-                
+
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 import { 
     View, 
@@ -11,20 +11,103 @@ import {
     SafeAreaView,
     Pressable,
     Image, 
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    Animated,
+    Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useGlobalContext } from './TabBarVisibilityContext';
 
+import Feather from 'react-native-vector-icons/Feather';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+
+// const fadeAnim = useRef(new Animated.Value(0)).current;  // Initial value for opacity: 0
 
 
 
-function HomePage({route}) {
+function HomePage({ route, navigation }) {
 
     const { shouldFetchTotal, setShouldFetchTotal } = useGlobalContext()
-    const [totalSpend, setTotalSpend] = useState(null)
+    const [totalSpend, setTotalSpend] = useState(0)
+    const [totalOunces, setTotalOunces] = useState(0)
+
+
+
+    const { isTabBarVisible } = useGlobalContext();
+    const { setIsTabBarVisible } = useGlobalContext();
 
     const IP = route.params.IP;
+
+    console.log(route.params.renderMessage);
+
+
+
+    const months = ['January', 'February', 'March',
+        'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'];
+
+
+
+    const fadeAnim = useRef(new Animated.Value(1)).current;
+
+    const center = (Dimensions.get('screen').width) / 3
+
+
+
+
+    // console.log("showSuccessMessage", showSuccessMessage);
+
+
+
+    
+    useEffect(() => {
+        if (route.params.renderMessage) {
+
+            // Set a timeout to fade out the message after 5 seconds
+            const timer = setTimeout(() => {
+                fadeOut();
+            }, 2000);
+            return () => clearTimeout(timer); // Clear the timeout if the component unmounts
+        }
+
+    }, [route.params.renderMessage]);
+
+    useEffect(() => {
+
+        getCurrentMonthsTotalSpend()
+        formatTotalSpend()
+
+
+
+
+    })
+
+    useEffect(() => {
+        formatTotalSpend()
+    }, [totalSpend])
+
+    const fadeOut = () => {
+        // Will change fadeAnim value to 0 in 5 seconds
+        Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 2500,
+            useNativeDriver: true,
+        }).start(() => {
+           
+        });
+
+    };
+
+    const renderSuccessMsg = () => {
+        
+        return (
+            <Animated.View style={style.successModal}>
+                <Text style={{ color: "green", fontSize:40, textAlign:'center' }}>Success Message!</Text>
+                <Feather name="check" size={24} color="green"/>
+
+            </Animated.View>
+        );
+    };
 
 
 
@@ -33,7 +116,10 @@ function HomePage({route}) {
         const date = new Date().toDateString()
 
         let d = date.split(" ")
-        console.log(d);
+
+        // setMonth( d[1] )
+
+
         let newDate = ''
         index = 0
         for (let item of d) {
@@ -50,31 +136,16 @@ function HomePage({route}) {
         return newDate;
     }
 
-    const navigation = useNavigation();
-
-
-
     const style = StyleSheet.create({
         container: {
             flex: 1,
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             padding: 20,
             flexDirection: 'column',
+            margin: 20,
         },
-        buttonContainer: {
-
-            marginBottom: 60, // Space at the bottom
-            
-            // borderRadius: 10,
-            // borderWidth: 2,
-            // borderColor: 'inherit',
-            width:200,
-            alignSelf:'center',
-            justifyContent:'space-between',
-            // gap:20,
-        },
-        buttonStyle: {
-            margin:20,
+                buttonStyle: {
+            margin: 20,
             borderRadius: 10,
             borderWidth: 2,
             borderColor: '#77c3ec',
@@ -87,22 +158,44 @@ function HomePage({route}) {
             color: 'black',
             fontSize: 18,
             fontWeight: 'bold',
-            alignSelf:'center', 
-            margin:15
+            alignSelf: 'center',
+            margin: 15
         },
+        successModal: {
+            position: 'absolute',
+            top: '50%', // center vertically
+            left: '50%',
+            transform: [{ translateX: -80 }, { translateY: -50 }], // adjust for exact centering
+            backgroundColor: '#f9f9f9',
+
+            padding: 20, // adjust as needed
+            borderRadius: 10, // rounded corners
+
+            // backgroundColor:'blue',
+
+
+            zIndex: 10,
+            opacity: fadeAnim,
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
+            elevation: 5,
+        }
+
     });
 
+    
 
-    useEffect( () => {
-        getCurrentMonthsTotalSpend()
-        formatTotalSpend()
-        
 
-    })
 
-    useEffect( () => {
-        formatTotalSpend()
-    }, [totalSpend])
+
+
+
+
+
+
 
 
 
@@ -134,43 +227,30 @@ function HomePage({route}) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log(data);
             console.log("we out here");
             setTotalSpend(data.total_spent)
+            setTotalOunces(data.total_ounces)
             
         } 
         catch (error) {
             console.error('There was an error fetching the receipts:', error);
         }
 
-        // data = null;
-
-        // fetch(`http://${IP}:5001/get-current-months-totals`)
-        // .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error(`HTTP error! status: ${ response.status }`);
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         console.log('Total:', data);
-
-
-
-        //     })
-        //     .catch(error => {
-        //         console.error('There was an error fetching the totals:', error);
-        //     });         
+     
     }
 
     const formatTotalSpend = () => {
         if (totalSpend){
             let spend = String(totalSpend).split(".");
-            console.log(spend[1].length);
+            // console.log("spend", spend);
+            // console.log(spend[1].length);
 
             if (spend[1].length < 1) {
                 spend[1] += "0"
 
+            }
+            else{
+                spend[1]= spend[1].substring(0,2)
             }
 
             return `$${spend[0]}.${spend[1]}`
@@ -190,7 +270,13 @@ function HomePage({route}) {
             <View style={{
                 display:'flex',
                 alignItems:"flex-start",
-                marginTop:60,
+               
+                
+                
+                
+                position:'absolute',
+                top:0,
+
             }}>
                 <Text style={{
                     fontSize:90, 
@@ -202,10 +288,40 @@ function HomePage({route}) {
                     fontWeight: '300',
                 }}>{formatDate()}</Text>
 
-                <View>
-                    <Text>{formatTotalSpend()}</Text>
-                </View>
+
             </View>
+
+            {route.params.renderMessage && renderSuccessMsg()}
+           
+
+            <View>
+
+                <Text style={{
+                    fontSize: 30
+                }}
+                >{months[(new Date()).getMonth() ] }'s Expenses: {formatTotalSpend()}</Text>
+
+                {/* below ill have each categories spend total
+                    bar chart of each with a nice display, can click on each to expound
+                */}
+
+                <Text style={{
+                    fontSize: 30
+                }}
+                >Ounces: {totalOunces} oz</Text>
+
+                <TouchableOpacity
+                    style={style.buttonStyle}
+                    onPress={() => { navigation.navigate("DataDisplayPage")}}
+                >
+                    <Text style={style.buttonText}>Next</Text>
+                </TouchableOpacity>
+
+                
+
+            </View>
+
+
 
 
 

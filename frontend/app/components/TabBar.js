@@ -30,6 +30,8 @@ const TabBar = ({ state, navigation, descriptors }) => {
                 width: 10,
                 height: 10,
             },
+
+            zIndex:3,
         },
     });
 

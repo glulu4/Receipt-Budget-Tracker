@@ -15,8 +15,13 @@ import { Camera, useCameraDevices, useCameraDevice, useCameraPermission } from '
 
 import { useGlobalContext } from './TabBarVisibilityContext';
 
-function CameraPage() {
-    const navigation = useNavigation();
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+
+
+function CameraPage({navigation}) {
+    // const navigation = useNavigation();
     const camera = useRef(null);
     const device = useCameraDevice('back')
     const [showCamera, setShowCamera] = useState(true);
@@ -29,6 +34,7 @@ function CameraPage() {
     // let photoList = [];
 
     const { setIsTabBarVisible } = useGlobalContext();
+
 
 
 
@@ -138,17 +144,20 @@ function CameraPage() {
                             <TouchableOpacity
                                 style={styles.topButtonStyle}
                                 onPress={goBack}>
-                                <Text style={{ color: 'white', fontWeight: '500' }}>
+
+                                    <MaterialIcons name='keyboard-backspace' size={25} />
+                                {/* <Text style={{ color: 'white', fontWeight: '500' }}>
                                     Back
-                                </Text>
+                                </Text> */}
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={styles.topButtonStyle}
                                 onPress={addAnother}>
-                                <Text style={{ color: 'white', fontWeight: '500' }}>
+                                {/* <Text style={{ color: 'white', fontWeight: '500' }}>
                                     Add another
-                                </Text>
+                                </Text> */}
+                                    <AntDesign name='plus' size={25} />
                             </TouchableOpacity>
                         </View>
 
@@ -160,16 +169,18 @@ function CameraPage() {
                             <TouchableOpacity
                                 style={styles.retakeButton}
                                 onPress={retakePhoto}>
-                                <Text style={{ color: '#77c3ec', fontWeight: '500' }}>
+                                {/* <Text style={{ color: '#77c3ec', fontWeight: '500' }}>
                                     Retake
-                                </Text>
+                                </Text> */}
+                                    <FontAwesome name='repeat' size={25} />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={styles.usePhotoButton}
                                 onPress={usePhoto}>
-                                <Text style={{ color: 'white', fontWeight: '500' }}>
+                                {/* <Text style={{ color: 'white', fontWeight: '500' }}>
                                         { (photoList.length>0) ? 'Finish' : 'Use Photo' }
-                                </Text>
+                                </Text> */}
+                                    <MaterialIcons name="check" size={25} />
                             </TouchableOpacity>
                         </View>
 
@@ -230,33 +241,48 @@ const styles = StyleSheet.create({
     },
 
     retakeButton: {
-        backgroundColor: '#fff',
-        padding: 10,
+        // backgroundColor: '#fff',
+        backgroundColor: '#FFFFFF80',
+        padding: 12,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: '#77c3ec',
+        borderColor: 'black',
+        width: 60,
+        height: 60,
+        borderRadius: 30
+
     }, 
     usePhotoButton: {
-        backgroundColor: '#77c3ec',
-        padding: 10,
+        // backgroundColor: '#77c3ec',
+        backgroundColor: '#FFFFFF80',
+        // padding: 12,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: 'white',
+        borderColor: 'black',
+        width: 60,
+        height: 60,
+        borderRadius: 30
     }, 
     topButtonStyle: {
         // backgroundColor: 'rgba(0,0,0,0.2)',
-        backgroundColor: '#77c3ec',
-        padding: 10,
+        backgroundColor: '#FFFFFF80',
+
+        // backgroundColor: '#77c3ec',
+        marginLeft: 15,
+        marginRight: 15,
+
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
-        borderWidth: 2,
-        borderColor: '#fff',
-        width: 100,
+        borderWidth: 1,
+        borderColor: 'black',
+        width: 60,
+        height:60,
+        borderRadius:30
 
 
     }

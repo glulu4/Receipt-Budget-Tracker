@@ -29,7 +29,10 @@ function App() {
     // const ip = '10.4.34.154' // cathy
     // const ip = '10.215.231.46' // panera 
 
-    const Stack = createNativeStackNavigator();
+    // const ip = '10.0.0.153' // ellie brenner
+
+    // const ip = '192.168.1.210' // chabad
+
     const HomeStack = createNativeStackNavigator();
     const ProfileStack = createNativeStackNavigator();
     const SettingsStack = createNativeStackNavigator();
@@ -44,7 +47,7 @@ function App() {
                 <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }}/>
                 <HomeStack.Screen name="Receipts" component={Receipt} />
 
-                <HomeStack.Screen name="Camera-Page" component={CameraPage} />
+                <HomeStack.Screen name="Camera-Page" component={CameraPage} screenOptions={{ gestureEnabled: false, headerShown: false }} />
                 <HomeStack.Screen name="Loading-Page" component={Loading} initialParams={{IP: ip}} />
                 {/* <HomeStack.Screen name="Loading-Page" component={(props) => <Loading {...props} IP={ip} />} /> */}
 
@@ -57,7 +60,7 @@ function App() {
     function MonthlyStackScreen() {
         return (
             <MonthlyStack.Navigator screenOptions={{ headerShown: false }}>
-                <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} />
+                <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} initialParams={{ IP: ip }} />
                 {/* other screens in the profile stack */}
             </MonthlyStack.Navigator>
         );
@@ -85,7 +88,13 @@ function App() {
     return (
         <TabBarVisibilityProvider>
             <NavigationContainer>
-                <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }} tabBar={props => <TabBar {...props} />}>
+                <Tab.Navigator initialRouteName='Home' screenOptions={{
+                    title: 'My home',
+                    headerStyle: {
+                        backgroundColor: 'pink',
+                    },
+
+                }} tabBar={props => <TabBar {...props} />}>
                     <Tab.Screen name="Home" component={HomeStackScreen} />
                     <Tab.Screen name="Monthly" component={MonthlyStackScreen} />
                     <Tab.Screen name="Settings" component={SettingsStackScreen} />

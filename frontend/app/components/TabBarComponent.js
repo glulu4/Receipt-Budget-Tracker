@@ -7,13 +7,18 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-// import FontAwesome from 'react-native-vetcor-icons/FontAwesome'
 import * as ImagePicker from 'react-native-image-picker';
 import { TapGesture } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
 import { useCameraPermission, Camera } from 'react-native-vision-camera';
+
+import Feather from 'react-native-vector-icons/Feather';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+
+
 
 import { useGlobalContext } from './TabBarVisibilityContext';
 import cam from '../assets/camera.png';
@@ -33,7 +38,7 @@ const ImagePickerModal = ({ isVisible, onClose, onImageLibraryPress, onCameraPre
             margin: 10,
         },
         buttons: {
-            backgroundColor: 'white',
+            backgroundColor: 'lightgray',
             flexDirection: 'row',
             borderTopRightRadius: 30,
             borderTopLeftRadius: 30,
@@ -41,6 +46,7 @@ const ImagePickerModal = ({ isVisible, onClose, onImageLibraryPress, onCameraPre
         button: {
             flex: 1,
             justifyContent: 'center',
+            marginTop:15,
             alignItems: 'center',
         },
         buttonText: {
@@ -72,11 +78,13 @@ const ImagePickerModal = ({ isVisible, onClose, onImageLibraryPress, onCameraPre
                 <View style={styles.centeredView}>
                     <SafeAreaView style={styles.buttons}>
                         <Pressable style={styles.button} onPress={onImageLibraryPress}>
-                            <Image style={styles.buttonIcon} source={img} />
+                            <FontAwesome name="photo" size={30}/>
+                            {/* <Image style={styles.buttonIcon} source={img} /> */}
                             <Text style={styles.buttonText}>Library</Text>
                         </Pressable>
                         <Pressable style={styles.button} onPress={onCameraPress}>
-                            <Image style={styles.buttonIcon} source={cam} />
+                            <Feather name='camera' size={30} />
+                            {/* <Image style={styles.buttonIcon} source={cam} /> */}
                             <Text style={styles.buttonText}>Camera</Text>
                         </Pressable>
                     </SafeAreaView>

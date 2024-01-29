@@ -28,15 +28,16 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///receipt.db'
 db.init_app(app) # instead of passing 'app' to db = SQLAlchemy(app) in model.py
 
 
-# @app.cli.command('initdb')
-# def initdb_command():
+
 
 
 @app.cli.command('initdb')
 def initdb_command():
-    db.drop_all()
-    db.create_all() # creates tabel for all defined models
-    print('Initialized the database.')
+    with app.app_context():
+        db.drop_all()
+        db.create_all()  # creates table for all defined models
+        print('Initialized the database.')
+
 
 @app.route('/start-upload-session', methods=["POST"])
 def start_session():
@@ -183,12 +184,40 @@ def get_receipt():
 # gets total spend and ounces
 @app.route("/get-current-months-totals",  methods=['GET'])
 def get_totals():
-    total_spent = get_month_total_spend()
-    total_ounces = get_current_month_total_ounces() 
 
-    return jsonify(total_spent=total_spent, total_ounces=total_ounces), 201
+    try:
+        total_spent = get_month_total_spend()
+        total_ounces = get_current_month_total_ounces() 
+
+        return jsonify(total_spent=total_spent, total_ounces=total_ounces), 201
+    except Exception as error:
+        print(error)
+        
+        return jsonify("There was an error"), 500
 
 
+@app.route("/get-specific-months-receipts",  methods=['GET'])
+def get_specific_months_receipts():
+
+    year = request.args.get('year')
+    month = request.args.get('month')
+
+
+    print ( "year: ", year)
+    print( "month: ", month)
+
+    receipts = ReceiptModel.query.filter(
+        extract('year', ReceiptModel.date) == year,
+        extract('month', ReceiptModel.date) == month
+    ).all()
+
+
+
+
+
+
+
+    return jsonify(receipts=[r.to_dict() for r in receipts]), 201
 
 
 def get_month_total_spend(year=None, month=None):
@@ -307,36 +336,7 @@ def analyze(image, new_receipt):
 
 if __name__ == '__main__':
     # ssl_context='adhoc'
-    # with app.app_context():
-    #     db.drop_all()  # Create tables for your models
-    #     db.create_all() # creates tabel for all defined models
-    #     print('Initialized the database.')
     app.run(debug=True, host='0.0.0.0', port='5001')
 
+    
 
-
-
-# def get_monthly_totals(year=None, month=None):
-#     if year is None or month is None:
-#         current_date = datetime.now()
-#     else:
-#         current_date = datetime(year, month, 1)
-
-#     first_day_of_month = current_date.replace(day=1)
-#     last_day_of_month = current_date.replace(month=current_date.month % 12 + 1, day=1) - timedelta(days=1)
-
-#     query_result = db.session.query(
-#                     func.sum(Receipt.total).label('total_spend'),
-#                     func.sum(Item.num_oz).label('total_ounces')
-#                 )\
-#                 .join(Item, Receipt._id == Item.receipt_id)\
-#                 .filter(Receipt.date >= first_day_of_month, Receipt.date <= last_day_of_month)\
-#                 .one()
-
-#     total_spend = query_result.total_spend if query_result.total_spend is not None else 0
-#     total_ounces = query_result.total_ounces if query_result.total_ounces is not None else 0
-
-#     return {
-#         'total_spend': total_spend,
-#         'total_ounces': total_ounces
-#     }
