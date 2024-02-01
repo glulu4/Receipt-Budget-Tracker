@@ -32,13 +32,18 @@ function HomePage({ route, navigation }) {
     const [totalOunces, setTotalOunces] = useState(0)
 
 
+    // console.log("routee", route.params.renderMessage);
+
+    const [renderMsg, setRenderMsg] = useState(route.params.renderMessage)
+
+    // console.log("renderMsg", renderMsg);
+
 
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
 
     const IP = route.params.IP;
 
-    console.log(route.params.renderMessage);
 
 
 
@@ -54,30 +59,29 @@ function HomePage({ route, navigation }) {
 
 
 
+    console.log("route.params.renderMessage", route.params.renderMessage);
 
-    // console.log("showSuccessMessage", showSuccessMessage);
-
-
-
-    
     useEffect(() => {
         if (route.params.renderMessage) {
+            setRenderMsg(true); // Show the message
+            fadeAnim.setValue(1); // Reset animation to visible state
+        }
+    }, [route.params.renderMessage]);
 
-            // Set a timeout to fade out the message after 5 seconds
+    useEffect(() => {
+        // When showSuccessMessage is true, start the fade out animation
+        if (renderMsg) {
             const timer = setTimeout(() => {
                 fadeOut();
             }, 2000);
-            return () => clearTimeout(timer); // Clear the timeout if the component unmounts
+            return () => clearTimeout(timer);
         }
-
-    }, [route.params.renderMessage]);
+    }, [renderMsg]);
 
     useEffect(() => {
 
         getCurrentMonthsTotalSpend()
         formatTotalSpend()
-
-
 
 
     })
@@ -93,21 +97,12 @@ function HomePage({ route, navigation }) {
             duration: 2500,
             useNativeDriver: true,
         }).start(() => {
-           
+            setRenderMsg(false)
         });
-
-    };
-
-    const renderSuccessMsg = () => {
         
-        return (
-            <Animated.View style={style.successModal}>
-                <Text style={{ color: "green", fontSize:40, textAlign:'center' }}>Success Message!</Text>
-                <Feather name="check" size={24} color="green"/>
-
-            </Animated.View>
-        );
     };
+
+
 
 
 
@@ -291,7 +286,16 @@ function HomePage({ route, navigation }) {
 
             </View>
 
-            {route.params.renderMessage && renderSuccessMsg()}
+            {renderMsg || route.params.renderMessage
+            ? 
+            <Animated.View style={style.successModal}>
+                <Text style={{ color: "green", fontSize: 40, textAlign: 'center' }}>Success Message!</Text>
+                <Feather name="check" size={24} color="green" />
+            </Animated.View>
+            
+            : console.log("broski")}
+            
+
            
 
             <View>
@@ -312,7 +316,7 @@ function HomePage({ route, navigation }) {
 
                 <TouchableOpacity
                     style={style.buttonStyle}
-                    onPress={() => { navigation.navigate("DataDisplayPage")}}
+                    onPress={() => { navigation.navigate("DataDisplayPage" )}}
                 >
                     <Text style={style.buttonText}>Next</Text>
                 </TouchableOpacity>

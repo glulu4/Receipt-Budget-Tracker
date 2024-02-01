@@ -25,13 +25,13 @@ function App() {
     // const ip = '10.0.0.155'; // home 
     // const ip = '10.0.0.153'; // aba 
 
-    const ip = '192.168.5.122' // kennet 
+    // const ip = '192.168.5.122' // kennet 
     // const ip = '10.4.34.154' // cathy
     // const ip = '10.215.231.46' // panera 
 
     // const ip = '10.0.0.153' // ellie brenner
 
-    // const ip = '192.168.1.210' // chabad
+    const ip = '192.168.1.210' // chabad
 
     const HomeStack = createNativeStackNavigator();
     const ProfileStack = createNativeStackNavigator();

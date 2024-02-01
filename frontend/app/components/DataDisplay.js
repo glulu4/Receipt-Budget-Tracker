@@ -19,162 +19,82 @@ import {
 
 import SwipeRow from '@nghinv/react-native-swipe-row';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import StoreDropdown from './StoreDropdown';
+
+import EditModal from './EditItemModal';
 
 
-const EditModal = ({ isVisible, onClose, onSave, item }) => {
-    // Local states for each field in the modal
-    const [description, setDescription] = useState(item?.description);
-    const [quantity, setQuantity] = useState(item?.quantity?.toString()); // Convert quantity to string for TextInput
-    const [numOz, setNumOz] = useState(item?.num_oz?.toString());
-    const [caseSize, setCaseSize] = useState(item?.case_size?.toString());
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        margin: 10,
 
+    },
+    headerText: {
+        alignSelf: 'center',
+        fontSize: 60,
+        zIndex: 1, // Add this line
+        fontWeight: '500',
+    },
+    rowStyle: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 20,
+        padding: 20,
+        borderBottomWidth: 3,
+        borderBottomColor: 'white',
+        zIndex: 0,
 
+    },
+    item: {
+        margin: 10,
+        fontSize: 20
+    },
+    itemHeader: {
+        fontSize: 30,
+        marginTop: 40,
+        margin: 10,
 
-    // Function to handle saving the edited item
-    const handleSave = () => {
-        // Create an updated item object
-        const updatedItem = {
-            ...item,
-            description,
-            quantity: parseInt(quantity, 10), // Convert quantity back to a number
-            num_oz: parseInt(numOz, 10),
-            case_size: parseInt(caseSize, 10),
-        };
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+    },
 
-        // Call the onSave function passed from the parent component
-        onSave(updatedItem);
-    };
-
-    // Reset local states when the modal is closed
-    useEffect(() => {
-        if (!isVisible) {
-            setDescription(item?.description);
-            setQuantity(item?.quantity.toString());
-            setNumOz(item?.numOz);
-            setCaseSize(item?.case_size);
-        }
-    }, [isVisible, item]);
-
-
-    const styles = StyleSheet.create({
-
-        centeredView: {
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 22,
-
-        },
-        modalView: {
-
-            margin: 20,
-            marginTop: 130,
-            backgroundColor: "white",
-            borderRadius: 20,
-            padding: 35,
-            alignItems: "center",
-            justifyContent: 'center',
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 2
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-        },
-        modalTexHeader: {
-            marginBottom: 15,
-            textAlign: "center",
-            fontSize: 40,
-            marginBottom: 40,
-        },
-        modalInput: {
-            // width: 250,
-            height: 50,
-            marginBottom: 12,
-            borderWidth: 1,
-            padding: 10
-        },
-    })
-
-    return (
-
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isVisible}
-            onRequestClose={onClose}
-        >
-
-            <TouchableWithoutFeedback onPress={() => {
-
-                onClose();
-
-            }}>
-
-                <View style={styles.centeredView}>
-                    <ScrollView scrollEnabled={false}>
-                        <View style={styles.modalView}>
-
-                            <View>
-
-                                <Text style={styles.modalTexHeader}>Edit {item.description}</Text>
+    bottomRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 50,
+    },
+    bottomPrefix: {
+        fontWeight: '700',
+        fontSize: 25
+    },
+    bottomData: {
+        fontSize: 25,
+    },
+    buttonStyle: {
+        margin: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#77c3ec',
+        backgroundColor: 'pink',
 
 
 
-                                <Text>Description:</Text>
-                                <TextInput
-                                    style={styles.modalInput}
-                                    onChangeText={setDescription}
-                                    value={description}
-                                    placeholder="Description"
-                                />
+    },
+    buttonText: {
+        color: 'black',
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        margin: 15
+    },
 
-                                <Text>Quantity:</Text>
-                                <TextInput
-                                    style={styles.modalInput}
-                                    onChangeText={setQuantity}
-                                    value={quantity}
-                                    keyboardType="numeric"
-                                    placeholder="Quantity"
-                                />
-
-
-
-
-
-                                <Text>Item Size Ounces:</Text>
-                                <TextInput
-                                    style={styles.modalInput}
-                                    onChangeText={setNumOz}
-                                    value={numOz}
-                                    keyboardType="numeric"
-                                    placeholder="Item Size"
-                                />
-
-                                <Text>Case Size:</Text>
-                                <TextInput
-                                    style={styles.modalInput}
-                                    onChangeText={setCaseSize}
-                                    value={caseSize}
-                                    keyboardType="numeric"
-                                    placeholder="Case Size"
-                                />
-
-                                <Button title="Save" onPress={handleSave} />
-
-                            </View>
-                        </View>
-                    </ScrollView>
-                </View>
-
-            </TouchableWithoutFeedback>
-        </Modal>
-
-    );
-};
-
+})
 
 export default function DataDisplay({ navigation, route }) {
 
@@ -271,11 +191,15 @@ export default function DataDisplay({ navigation, route }) {
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
+    const [ storeName, setStoreName] = useState("Store Name...")
+
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
 
 
-
+    const handleStoreSelect = (selectedStoreName) => {
+        setStoreName(selectedStoreName);
+    };
     const IP = route.params.IP;
 
     const submitData = async () => {
@@ -302,12 +226,13 @@ export default function DataDisplay({ navigation, route }) {
 
         let body = {
             ...receipt, // spread the receipt
+            merchant_name:storeName,
             items: items,
         }
 
+        console.log("body", body);
 
-
-        // console.log("body", body);
+        return;
 
 
         fetch(`http://${IP}:5001/add_to_db`, {
@@ -369,76 +294,7 @@ export default function DataDisplay({ navigation, route }) {
     }
 
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            margin: 10,
 
-        },
-        headerText: {
-            alignSelf: 'center',
-            fontSize: 60,
-            zIndex: 1, // Add this line
-            fontWeight: '500',
-        },
-        rowStyle: {
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            gap: 20,
-            padding: 20,
-            borderBottomWidth: 3,
-            borderBottomColor: 'white',
-
-        },
-        item: {
-            margin: 10,
-            fontSize: 20
-        },
-        itemHeader: {
-            fontSize: 30,
-            marginTop: 40,
-            margin: 10,
-
-        },
-        centeredView: {
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 22
-        },
-
-        bottomRow: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            gap: 50,
-        },
-        bottomPrefix: {
-            fontWeight: '700',
-            fontSize: 25
-        },
-        bottomData: {
-            fontSize: 25,
-        },
-        buttonStyle: {
-            margin: 20,
-            borderRadius: 10,
-            borderWidth: 2,
-            borderColor: '#77c3ec',
-            backgroundColor: 'pink',
-
-
-
-        },
-        buttonText: {
-            color: 'black',
-            fontSize: 18,
-            fontWeight: 'bold',
-            alignSelf: 'center',
-            margin: 15
-        },
-
-    })
     const deleteRow = (item) => {
         const updatedItems = items.filter((currItem) => currItem.id_ !== item.id_);
         setItems(updatedItems);
@@ -480,7 +336,8 @@ export default function DataDisplay({ navigation, route }) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>Store</Text>
+
+                <StoreDropdown selectedStoreName={storeName} onStoreSelect={handleStoreSelect} />
             </View>
 
             <View style={styles.rowStyle}>
@@ -496,6 +353,8 @@ export default function DataDisplay({ navigation, route }) {
                 style={{
                     backgroundColor: 'lightgray',
                     borderRadius: 6,
+                    margin:5,
+                    zIndex:0
 
 
                 }}
