@@ -314,12 +314,12 @@ function HomePage({ route, navigation }) {
                 }}
                 >Ounces: {totalOunces} oz</Text>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={style.buttonStyle}
                     onPress={() => { navigation.navigate("DataDisplayPage" )}}
                 >
                     <Text style={style.buttonText}>Next</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 
 

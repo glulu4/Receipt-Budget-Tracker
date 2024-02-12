@@ -67,6 +67,8 @@ const styles = StyleSheet.create({
 });
 
 const Dropdown = ({ toggleModal, data, handleSelect }) => {
+
+    console.log("yoo", data);
     return (
         <Modal
             transparent={true}
@@ -78,14 +80,14 @@ const Dropdown = ({ toggleModal, data, handleSelect }) => {
                     <View style={styles.modalContent}>
                         <FlatList
                             data={data}
-                            keyExtractor={item => item.key}
+                            keyExtractor={item => item.id}
                             renderItem={({ item }) => (
 
                                 <TouchableOpacity
                                     style={styles.listItem}
                                     onPress={() => handleSelect(item)}
                                 >
-                                    <Text style={{fontSize:15}}>{item.value}</Text>
+                                    <Text style={{fontSize:15}}>{item.name}</Text>
                                 </TouchableOpacity>
                             )}
 
@@ -98,24 +100,28 @@ const Dropdown = ({ toggleModal, data, handleSelect }) => {
     );
 };
 
-export default function StoreDropdown({ selectedStoreName, onStoreSelect }) {
+export default function StoreDropdown({ selectedStoreName, onStoreSelect, storeList }) {
     const [text, setText] = useState(selectedStoreName);
     const [dropDownVisible, setDropdownVisible] = useState(false);
     const [selected, setSelected] = useState("");
 
-    const data = [
-        { key: '1', value: 'Mobiles', disabled: true },
-        { key: '2', value: 'Appliances' },
-        { key: '3', value: 'Cameras' },
-        { key: '4', value: 'Computers', disabled: true },
-        { key: '5', value: 'Vegetables' },
-        { key: '6', value: 'Diary Products' },
-        { key: '7', value: 'Drinks' },
-    ]
+    // const data = [
+    //     { key: '1', value: 'Mobiles' },
+    //     { key: '2', value: 'Appliances' },
+    //     { key: '3', value: 'Cameras' },
+    //     { key: '4', value: 'Computers', },
+    //     { key: '5', value: 'Vegetables' },
+    //     { key: '6', value: 'Diary Products' },
+    //     { key: '7', value: 'Drinks' },
+    // ]
+
+    console.log("from sdrop", storeList);
+    const data = storeList?.stores;
+
 
     const handleSelect = (item) => {
-        setText(item.value);
-        onStoreSelect(item.value);
+        setText(item.name);
+        onStoreSelect(item.name);
         toggleModal();
     };
 

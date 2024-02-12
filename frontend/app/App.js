@@ -14,6 +14,7 @@ import Settings from './components/Settings';
 import Profile from './components/Profile';
 import Monthly from './components/Monthly';
 
+import ReceiptDisplay from './components/ReceiptDisplay';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import TabBar from './components/TabBar';
@@ -25,14 +26,18 @@ function App() {
     // const ip = '10.0.0.155'; // home 
     // const ip = '10.0.0.153'; // aba 
 
-    // const ip = '192.168.5.122' // kennet 
+    const ip = '192.168.5.122' // kennet 
     // const ip = '10.4.34.154' // cathy
+    
     // const ip = '10.215.231.46' // panera 
 
-    // const ip = '10.0.0.153' // ellie brenner
+    // const ip = '10.0.0.153' // ellie b
 
-    const ip = '192.168.1.210' // chabad
+    // const ip = '192.168.1.210' // chabad
 
+    // const ip = '10.5.46.147'; // lawrence
+
+    // const ip = '10.4.75.248' // cathy 2
     const HomeStack = createNativeStackNavigator();
     const ProfileStack = createNativeStackNavigator();
     const SettingsStack = createNativeStackNavigator();
@@ -59,8 +64,12 @@ function App() {
     }
     function MonthlyStackScreen() {
         return (
-            <MonthlyStack.Navigator screenOptions={{ headerShown: false }}>
-                <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} initialParams={{ IP: ip }} />
+            <MonthlyStack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
+                <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} initialParams={{ IP: ip }} options={{
+                    gestureEnabled: false, // Disable swipe back gesture
+                }} />
+                <MonthlyStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ IP: ip }} />
+
                 {/* other screens in the profile stack */}
             </MonthlyStack.Navigator>
         );

@@ -96,96 +96,101 @@ const styles = StyleSheet.create({
 
 })
 
+
+// eventually add store lise here
 export default function DataDisplay({ navigation, route }) {
 
-    let t = {
-        "date": "2024-01-01",
-        "items": [
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Fage",
-                "id_": 1,
-                "num_oz": null,
-                "price": 1.49,
-                "quantity": 7,
-                "total_price": 10.43
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Quest",
-                "id_": 2,
-                "num_oz": null,
-                "price": 9.49,
-                "quantity": 1,
-                "total_price": 7.48
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Gg eggs",
-                "id_": 3,
-                "num_oz": null,
-                "price": 2.59,
-                "quantity": 3,
-                "total_price": 7.77
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Legendaryfds",
-                "id_": 4,
-                "num_oz": null,
-                "price": 9.99,
-                "quantity": 1,
-                "total_price": 7.82
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Halo top",
-                "id_": 5,
-                "num_oz": null,
-                "price": 0,
-                "quantity": 1,
-                "total_price": 4.69
-            },
-            // ... (additional items continue in the same format)
-        ],
-        "merchant_name": null,
-        "pa_tax_paid": false,
-        "subtotal": 145.18,
-        "total": 146.71,
-        "total_tax": 1.53
-    }
+    // let t = {
+    //     "date": "2024-01-01",
+    //     "items": [
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Fage",
+    //             "id_": 1,
+    //             "num_oz": null,
+    //             "price": 1.49,
+    //             "quantity": 7,
+    //             "total_price": 10.43
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Quest",
+    //             "id_": 2,
+    //             "num_oz": null,
+    //             "price": 9.49,
+    //             "quantity": 1,
+    //             "total_price": 7.48
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Gg eggs",
+    //             "id_": 3,
+    //             "num_oz": null,
+    //             "price": 2.59,
+    //             "quantity": 3,
+    //             "total_price": 7.77
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Legendaryfds",
+    //             "id_": 4,
+    //             "num_oz": null,
+    //             "price": 9.99,
+    //             "quantity": 1,
+    //             "total_price": 7.82
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Halo top",
+    //             "id_": 5,
+    //             "num_oz": null,
+    //             "price": 0,
+    //             "quantity": 1,
+    //             "total_price": 4.69
+    //         },
+    //         // ... (additional items continue in the same format)
+    //     ],
+    //     "merchant_name": null,
+    //     "pa_tax_paid": false,
+    //     "subtotal": 145.18,
+    //     "total": 146.71,
+    //     "total_tax": 1.53
+    // }
 
 
     const [errorMsg, setErrorMsg] = useState("")
     const [drinkError, setDrinkError] = useState(false)
 
-    // const r = route.params?.receiptData;
+    // receipt = t
 
-    // let receipt = null;
-    // if (r) {
+    const storeList = route.params?.storeList;
 
-    //     for (let item of r) {
-    //         if (!item.message) {
-    //             receipt = item
-    //         }
-    //     }
-    // }
-    // else {
-    //     receipt = t
-    // }
-    // if ( r.length > 1){
-    //     receipt = r[1];
-    // }
-    // else{
-    //     receipt = r[0];
-    // }
+    const r = route.params?.receiptData;
 
-    receipt = t
+    let receipt = null;
+    if (r) {
+
+        for (let item of r) {
+            if (!item.message) {
+                receipt = item
+            }
+        }
+    }
+    else {
+        receipt = t
+    }
+    if ( r.length > 1){
+        receipt = r[1];
+    }
+    else{
+        receipt = r[0];
+    }
+
 
     const [items, setItems] = useState(receipt.items); // Assuming this will be populated from your data source
     const [isModalVisible, setModalVisible] = useState(false);
@@ -196,11 +201,55 @@ export default function DataDisplay({ navigation, route }) {
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
 
+    // const [storeList, setStoreList] = useState([])
+
 
     const handleStoreSelect = (selectedStoreName) => {
         setStoreName(selectedStoreName);
     };
     const IP = route.params.IP;
+
+    // FOR TESTING add get store list and useffect here
+    
+
+
+    // returns true if the store is in our list
+    const containsStore = () => {
+        let list = storeList.stores;
+
+        for (const store of list) {
+            if (store.name.toLowerCase() === storeName.toLowerCase()) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+
+
+    const addStore2DB = async () => {
+
+        body = {"new_store": storeName}
+
+        fetch(`http://${IP}:5001/add-store`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        }).then((response) => {
+            console.log(response)
+            return response.json();
+        })
+        // needed because above then returns
+        .then((result) => {
+            console.log(result);
+        })
+        .catch(() => {
+            console.log("Error posting new store");
+        });
+    }
 
     const submitData = async () => {
 
@@ -224,6 +273,23 @@ export default function DataDisplay({ navigation, route }) {
             }
         }
 
+        if ( storeName === "Store Name..."){
+            setDrinkError(true)
+            setErrorMsg(`Enter a store name`)
+            return;
+        }
+
+        // if we dont have store, add it to DB
+        if ( !containsStore() ){
+            addStore2DB();
+        }
+        else{
+            console.log("the store is already in the db jawns");
+        }
+
+
+
+
         let body = {
             ...receipt, // spread the receipt
             merchant_name:storeName,
@@ -232,10 +298,10 @@ export default function DataDisplay({ navigation, route }) {
 
         console.log("body", body);
 
-        return;
+        // return;
 
 
-        fetch(`http://${IP}:5001/add_to_db`, {
+        fetch(`http://${IP}:5001/add-to-db`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -337,7 +403,7 @@ export default function DataDisplay({ navigation, route }) {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
 
-                <StoreDropdown selectedStoreName={storeName} onStoreSelect={handleStoreSelect} />
+                <StoreDropdown selectedStoreName={storeName} onStoreSelect={handleStoreSelect} storeList={storeList} />
             </View>
 
             <View style={styles.rowStyle}>

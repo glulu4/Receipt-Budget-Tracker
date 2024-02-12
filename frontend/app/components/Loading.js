@@ -43,6 +43,41 @@ function Loading({ navigation, route }) {
         return await response.json();
     };
 
+    // const getStores = async () => {
+
+    //     fetch(`http://${IP}:5001/get-stores`)
+    //         .then(response => {
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! status: ${response.status}`);
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => {
+                
+    //             console.log('Stores:', data);
+    //             return data;
+
+    //             // Here you can do something with the received data
+    //         })
+    //         .catch(error => {
+    //             console.error('There was an error fetching the total', error);
+    //         });
+    // }
+
+    const getStores = async () => {
+        try {
+            const response = await fetch(`http://${IP}:5001/get-stores`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log('Stores:', data);
+            return data; // Return the data for use with await
+        } catch (error) {
+            console.error('There was an error fetching the stores:', error);
+            throw error; // Rethrow the error to handle it in the calling function
+        }
+    }
     const processPhotos = async () => {
         try {
             const sessionId = await startUploadSession();
@@ -51,7 +86,12 @@ function Loading({ navigation, route }) {
             const results = await Promise.all(uploadPromises);
 
             console.log('All uploads complete:');
-            navigation.navigate('DataDisplayPage', { receiptData: results });
+
+            storeList = await getStores();
+
+
+            console.log("inp phot", storeList);
+            navigation.navigate('DataDisplayPage', { receiptData: results, storeList: storeList });
         } catch (error) {
             console.error('Error:', error);
             setIsTabBarVisible(true);

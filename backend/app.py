@@ -16,7 +16,9 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from datetime import datetime, date, time, timedelta
-from model import db, Receipt as ReceiptModel, Item
+from model import db, Receipt as ReceiptModel, Item, Stores
+
+
 
 sessions = {}
 
@@ -90,7 +92,7 @@ def process_images(session_id):
     return new_receipt
 
 
-@app.route('/add_to_db', methods=['POST'])
+@app.route('/add-to-db', methods=['POST'])
 def add_receipt_to_db():
 
     print("made it")
@@ -289,10 +291,57 @@ def get_current_month_total_ounces():
 
 
 
-   
+@app.route('/get-stores', methods=["GET"])
+def get_stores():
+
+    try:
+        stores = Stores.query.all()
+        store_list = [store.to_dict() for store in stores ]
+        print("Sending your previous store names")
+        return jsonify(stores=store_list), 201
+       
+    except Exception as e :
+        return jsonify(error_message=str(e)), 500
+    
+
+@app.route('/add-store', methods=["POST"])
+def add_new_store():
+     
+     try:
+        store = request.get_json()
+
+        store_name = store['new_store']
+
+        if store_exists_in_db(store_name):
+            return jsonify(message="Store already in DB"), 201
+
+
+        new_store = Stores(name=store_name)
+        db.session.add(new_store)
+        db.session.commit()
+        print("Store added")
+        
+        return jsonify(message="Store added"), 201
+
+     except Exception as e:
+        print("Store was not added", e)
+        
+        return jsonify(error_message=str(e)), 500
+
+
+
+         
 
   
-
+def store_exists_in_db(store_name):
+    try:
+        # Query for the store by name
+        store = Stores.query.filter_by(name=store_name).first()
+        # If store exists (not None), return True
+        return store is not None
+    except Exception as e:
+        print("Error checking store existence:", e)
+        return False  # Return False if an error occurs
 
 
 def analyze(image, new_receipt):

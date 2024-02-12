@@ -1,7 +1,46 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 # note this should only be created once per project
 db = SQLAlchemy()
+
+
+class User(db.Model):
+    _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    name_of_restaurant = db.Column(db.String(100), nullable=False)
+
+    email = db.Column(db.String(100), unique=True, nullable=False) 
+    password_hash = db.Column(db.String(100))
+
+    receipts = db.relationship("Receipt", backref="user", lazy='dynamic')
+    stores = db.relationship("Stores", backref="user", lazy='dynamic')
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def to_dict(self):
+        return {
+            'id': self._id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'name_of_restaurant': self.name_of_restaurant,
+            'email': self.email
+        }
+
+    def __init__(self, first_name, last_name, name_of_restaurant, email, password):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.name_of_restaurant = name_of_restaurant
+        self.email = email
+        self.set_password(password)
+
+
 
 
 class Stores(db.Model):
@@ -14,8 +53,10 @@ class Stores(db.Model):
     def to_dict(self):
         return {
             "id" : self._id,
-            "name: " : self.name,
+            "name" : self.name,
         }
+    
+        
 
 class Receipt(db.Model):
     _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -42,8 +83,8 @@ class Receipt(db.Model):
     def to_dict(self):
         return {
             "_id" : self._id,
-            "merchant_name: " : self.merchant_name,
-            "date: " : str(self.date),
+            "merchant_name" : self.merchant_name,
+            "date" : str(self.date),
             'items': [item.to_dict() for item in self.items],
             "subtotal" : self.subtotal,
             "total_tax" : self.total_tax,
