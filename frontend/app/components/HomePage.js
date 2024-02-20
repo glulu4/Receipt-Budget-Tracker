@@ -20,6 +20,7 @@ import { useGlobalContext } from './TabBarVisibilityContext';
 
 import Feather from 'react-native-vector-icons/Feather';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 // const fadeAnim = useRef(new Animated.Value(0)).current;  // Initial value for opacity: 0
 
@@ -27,12 +28,14 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 function HomePage({ route, navigation }) {
 
-    const { shouldFetchTotal, setShouldFetchTotal } = useGlobalContext()
+    const { shouldFetchTotal, setShouldFetchTotal, currentUser, setCurrentUser, isSignIn, setIsSignIn } = useGlobalContext()
     const [totalSpend, setTotalSpend] = useState(0)
     const [totalOunces, setTotalOunces] = useState(0)
 
 
     // console.log("routee", route.params.renderMessage);
+
+    console.log("yo bitch", currentUser)
 
     const [renderMsg, setRenderMsg] = useState(route.params.renderMessage)
 
@@ -43,7 +46,6 @@ function HomePage({ route, navigation }) {
     const { setIsTabBarVisible } = useGlobalContext();
 
     const IP = route.params.IP;
-
 
 
 
@@ -79,12 +81,13 @@ function HomePage({ route, navigation }) {
     }, [renderMsg]);
 
     useEffect(() => {
+        setIsTabBarVisible(true)
 
         getCurrentMonthsTotalSpend()
         formatTotalSpend()
 
 
-    })
+    },[])
 
     useEffect(() => {
         formatTotalSpend()
@@ -131,7 +134,7 @@ function HomePage({ route, navigation }) {
         return newDate;
     }
 
-    const style = StyleSheet.create({
+    const styles = StyleSheet.create({
         container: {
             flex: 1,
             justifyContent: 'center',
@@ -177,6 +180,38 @@ function HomePage({ route, navigation }) {
             shadowOpacity: 0.3,
             shadowRadius: 2,
             elevation: 5,
+        },
+        screen: {
+            flex: 1,
+            margin: 10,
+            alignItems: 'center',
+
+        },
+        header: {
+            fontSize: 25,
+            textAlign: 'center',
+        },
+        buttonStyle: {
+            margin: 20,
+            borderRadius: 10,
+            borderWidth: 2,
+            borderColor: '#77c3ec',
+            backgroundColor: 'pink',
+
+
+
+        },
+        buttonText: {
+            color: 'black',
+            fontSize: 18,
+            fontWeight: 'bold',
+            // alignSelf: 'center',
+            margin: 15,
+            marginLeft: 20,
+            textAlign: 'left'
+        },
+        icon: {
+            marginTop: 50
         }
 
     });
@@ -257,10 +292,38 @@ function HomePage({ route, navigation }) {
         
     }
 
+    const onLogout = () => {
 
+        fetch(`http://${IP}:5001/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: {},
+        }).then((response) => {
+            // console.log(response)
+            return response.json();
+        })
+            // needed because above then returns
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((e) => {
+                console.log("Error logging out");
+                console.log(e);
+            });
+
+
+
+        setCurrentUser({});
+        setIsSignIn(false)
+
+
+
+    }
 
     return (
-        <View style={style.container}>
+        <View style={styles.container}>
 
             <View style={{
                 display:'flex',
@@ -277,7 +340,7 @@ function HomePage({ route, navigation }) {
                     fontSize:90, 
                     fontWeight:'400',
                     fontFamily:'monospace'
-                }}>Hi User</Text>
+                }}>Hi {currentUser.firstName}</Text>
                 <Text style={{
                     fontSize: 30,
                     fontWeight: '300',
@@ -288,7 +351,7 @@ function HomePage({ route, navigation }) {
 
             {renderMsg || route.params.renderMessage
             ? 
-            <Animated.View style={style.successModal}>
+            <Animated.View style={styles.successModal}>
                 <Text style={{ color: "green", fontSize: 40, textAlign: 'center' }}>Success Message!</Text>
                 <Feather name="check" size={24} color="green" />
             </Animated.View>
@@ -314,15 +377,17 @@ function HomePage({ route, navigation }) {
                 }}
                 >Ounces: {totalOunces} oz</Text>
 
-                {/* <TouchableOpacity
-                    style={style.buttonStyle}
-                    onPress={() => { navigation.navigate("DataDisplayPage" )}}
-                >
-                    <Text style={style.buttonText}>Next</Text>
-                </TouchableOpacity> */}
+
 
                 
+                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                    <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }} onPress={onLogout}>
+                        <Text style={styles.buttonText}>Logout</Text>
+                        <AntDesign name="right" size={20} style={{ marginRight: 10 }} />
+                    </TouchableOpacity>
 
+
+                </View>
             </View>
 
 

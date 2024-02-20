@@ -95,7 +95,10 @@ function CameraPage({navigation}) {
         setCurrPhoto(null);
         setPhotoList(prevList => []);
         setIsTabBarVisible(true);
-        navigation.navigate("HomePage");
+        console.log("Going back to home page");
+        navigation.goBack();
+
+        // navigation.navigate("HomePage");
     }
 
 

@@ -100,6 +100,10 @@ const styles = StyleSheet.create({
 // eventually add store lise here
 export default function DataDisplay({ navigation, route }) {
 
+
+    console.log("In Datadisplay.js");
+
+
     // let t = {
     //     "date": "2024-01-01",
     //     "items": [
@@ -203,6 +207,11 @@ export default function DataDisplay({ navigation, route }) {
 
     // const [storeList, setStoreList] = useState([])
 
+
+    useEffect(() => {
+        setIsTabBarVisible(false)
+
+    }, [])
 
     const handleStoreSelect = (selectedStoreName) => {
         setStoreName(selectedStoreName);

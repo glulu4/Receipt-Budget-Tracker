@@ -5,15 +5,19 @@ import { useGlobalContext } from './TabBarVisibilityContext';
 import RNFS from 'react-native-fs';
 
 function Loading({ navigation, route }) {
+
+    console.log("In Loading.js");
     const photos = route.params.photos;
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
 
     const { shouldFetchTotal, setShouldFetchTotal } = useGlobalContext();
 
-    console.log("pjoo", photos );
+    console.log("pjoojo", photos );
 
     const IP = route.params.IP;
+
+    console.log("Ip", IP);
 
     const startUploadSession = async () => {
         setShouldFetchTotal(true);
@@ -43,26 +47,7 @@ function Loading({ navigation, route }) {
         return await response.json();
     };
 
-    // const getStores = async () => {
 
-    //     fetch(`http://${IP}:5001/get-stores`)
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! status: ${response.status}`);
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => {
-                
-    //             console.log('Stores:', data);
-    //             return data;
-
-    //             // Here you can do something with the received data
-    //         })
-    //         .catch(error => {
-    //             console.error('There was an error fetching the total', error);
-    //         });
-    // }
 
     const getStores = async () => {
         try {
@@ -93,6 +78,7 @@ function Loading({ navigation, route }) {
             console.log("inp phot", storeList);
             navigation.navigate('DataDisplayPage', { receiptData: results, storeList: storeList });
         } catch (error) {
+            console.log("WE are getting here");
             console.error('Error:', error);
             setIsTabBarVisible(true);
             navigation.navigate("HomePage");

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -19,7 +19,19 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import TabBar from './components/TabBar';
 
+import SignIn from './components/SignIn';
+import Q1 from './components/Q1';
+import Q2 from './components/Q2';
+import Q3 from './components/Q3';
+import Q4 from './components/Q4';
+import Q5 from './components/Q5';
+import AccountLoading from './components/AccountLoading'
+
+import ExistingSignin from './components/ExistingSignin';
+
 import { TabBarVisibilityProvider } from './components/TabBarVisibilityContext';
+
+import { useGlobalContext } from './components/TabBarVisibilityContext';
 
 function App() {
 
@@ -28,7 +40,7 @@ function App() {
 
     const ip = '192.168.5.122' // kennet 
     // const ip = '10.4.34.154' // cathy
-    
+
     // const ip = '10.215.231.46' // panera 
 
     // const ip = '10.0.0.153' // ellie b
@@ -43,21 +55,35 @@ function App() {
     const SettingsStack = createNativeStackNavigator();
     const MonthlyStack = createNativeStackNavigator();
     const Tab = createBottomTabNavigator();
+    const SignInStack = createNativeStackNavigator();
+    const RootStack = createNativeStackNavigator();
 
 
+    const { isSignIn, setIsSignIn } = useGlobalContext()
+
+    function SignInScreen(){
+        return ( 
+            <SignInStack.Navigator screenOptions={{ headerShown: false }}>
+                <SignInStack.Screen name="InitSignIn" component={SignIn} />
+                <SignInStack.Screen name="Q1" component={Q1} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="Q2" component={Q2} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="Q3" component={Q3} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="Q4" component={Q4} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="Q5" component={Q5} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="CreatingAccount" component={AccountLoading} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="ExistingSignin" component={ExistingSignin} initialParams={{ IP: ip }} />
+            </SignInStack.Navigator>
+        )
+    }
 
     function HomeStackScreen() {
         return (
             <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-                <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }}/>
+                <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }} />
                 <HomeStack.Screen name="Receipts" component={Receipt} />
 
-                <HomeStack.Screen name="Camera-Page" component={CameraPage} screenOptions={{ gestureEnabled: false, headerShown: false }} />
-                <HomeStack.Screen name="Loading-Page" component={Loading} initialParams={{IP: ip}} />
-                {/* <HomeStack.Screen name="Loading-Page" component={(props) => <Loading {...props} IP={ip} />} /> */}
-
-                {/* <HomeStack.Screen name="DataDisplayPage" component={(props) => <DataDisplay {...props} IP={ip} />} /> */}
-
+                <HomeStack.Screen name="CameraPage" component={CameraPage} screenOptions={{ gestureEnabled: false, headerShown: false }} />
+                <HomeStack.Screen name="LoadingPage" component={Loading} initialParams={{ IP: ip }} />
                 <HomeStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ IP: ip }} />
             </HomeStack.Navigator>
         );
@@ -94,27 +120,55 @@ function App() {
     }
 
 
-    return (
-        <TabBarVisibilityProvider>
-            <NavigationContainer>
-                <Tab.Navigator initialRouteName='Home' screenOptions={{
+    console.log("isSignInp", isSignIn);
+
+
+    const MainApp = () => {
+        return (
+            <Tab.Navigator 
+                initialRouteName="Home" 
+                screenOptions={{
                     title: 'My home',
                     headerStyle: {
-                        backgroundColor: 'pink',
-                    },
+                    backgroundColor: 'pink',
+                },
+            }} 
+            tabBar={props => <TabBar {...props} />}>
+                <Tab.Screen name="Home" component={HomeStackScreen} />
+                <Tab.Screen name="Monthly" component={MonthlyStackScreen} />
+                <Tab.Screen name="Settings" component={SettingsStackScreen} />
+                <Tab.Screen name="Profile" component={ProfileStackScreen} />
 
-                }} tabBar={props => <TabBar {...props} />}>
-                    <Tab.Screen name="Home" component={HomeStackScreen} />
-                    <Tab.Screen name="Monthly" component={MonthlyStackScreen} />
-                    <Tab.Screen name="Settings" component={SettingsStackScreen} />
-                    <Tab.Screen name="Profile" component={ProfileStackScreen} />
-                </Tab.Navigator>
-            </NavigationContainer>
-        </TabBarVisibilityProvider>
+            </Tab.Navigator>
+        )
+    }
 
+
+    return (
+        <NavigationContainer>
+            <RootStack.Navigator screenOptions={{ headerShown: false }}>
+                {isSignIn ? (
+                    <>
+                        <RootStack.Screen name="MainApp" component={MainApp} initialParams={{ IP: ip }} />
+                        <RootStack.Screen name="LoadingPage" component={Loading} initialParams={{ IP: ip }} />
+                        <RootStack.Screen name="CameraPage" component={CameraPage} initialParams={{ IP: ip }} />
+                        <RootStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ IP: ip }}   />
+                        {/* <RootStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }} /> */}
+                        {/* Other global screens can be added here */}
+                    </>
+                ) : (
+                        <RootStack.Screen name="SignIn" component={SignInScreen} initialParams={{ IP: ip }}/>
+                )}
+            </RootStack.Navigator>
+        </NavigationContainer>
     );
 
 
+    // return (
+    //         <NavigationContainer>
+    //         {content}
+    //         </NavigationContainer>
+    // );
 
 
 }

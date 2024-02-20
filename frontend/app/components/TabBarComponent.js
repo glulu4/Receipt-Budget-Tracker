@@ -17,12 +17,12 @@ import { useCameraPermission, Camera } from 'react-native-vision-camera';
 
 import Feather from 'react-native-vector-icons/Feather';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import { useNavigationState } from '@react-navigation/native';
 
 
 
 import { useGlobalContext } from './TabBarVisibilityContext';
-import cam from '../assets/camera.png';
-import img from '../assets/image.jpg';
+
 
 const ImagePickerModal = ({ isVisible, onClose, onImageLibraryPress, onCameraPress }) => {
 
@@ -110,10 +110,6 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
 
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
-
-
-
-
     const { width } = Dimensions.get('window');
     const TAB_WIDTH = (width - 40 * 2) / 4;
     const translateX = useSharedValue(0);
@@ -222,30 +218,21 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
                     })
                     setIsImagePickerVisible(false);
                     setIsTabBarVisible(false);
-                    navigation.navigate("Loading-Page", { photos: photos })
+
+                    
+                    console.log("here, about to nav to loading page");
+                    navigation.navigate("LoadingPage",{ photos: photos});
+
+                    // navigation.navigate("Home", {
+                    //     screen:"Loading-Page",
+                    //     params: { photos: photos },
+                    // }
+                    // )
+                    
 
                 }
             }
         });
-        // ImagePicker.launchImageLibrary(options, setPickerResponse);
-        // setPickerResponse(false);
-
-        // ImagePicker.launchImageLibrary(options, (response) => {
-        //     setPickerResponse(response);
-        //     if (response) {
-        //         const imageArray = [];
-
-        //         pickerResponse?.assets?.forEach(asset => {
-        //             const uri = asset.uri;
-        //             imageArray.push(uri);
-        //         });
-
-        //         console.log(imageArray);
-
-        //         
-
-        //     }
-        // });
 
     };
 
@@ -266,7 +253,7 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
                 setIsImagePickerVisible(false);
                 setIsTabBarVisible(false);
 
-                navigation.navigate("Camera-Page");
+                navigation.navigate("CameraPage");
             }
 
             if (permission === 'denied') {

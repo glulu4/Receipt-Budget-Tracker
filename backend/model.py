@@ -10,7 +10,7 @@ class User(db.Model):
     _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
-    name_of_restaurant = db.Column(db.String(100), nullable=False)
+    name_of_restaurant = db.Column(db.String(128), nullable=False)
 
     email = db.Column(db.String(100), unique=True, nullable=False) 
     password_hash = db.Column(db.String(100))
@@ -30,7 +30,8 @@ class User(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'name_of_restaurant': self.name_of_restaurant,
-            'email': self.email
+            'email': self.email,
+            
         }
 
     def __init__(self, first_name, last_name, name_of_restaurant, email, password):
@@ -46,6 +47,7 @@ class User(db.Model):
 class Stores(db.Model):
     _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user._id'))
 
     def __init__( self, name):
         self.name=name
@@ -67,6 +69,8 @@ class Receipt(db.Model):
     total_tax = db.Column(db.Float, nullable=False)
     total = db.Column(db.Float, nullable=False)
     pa_tax_paid = db.Column(db.Boolean, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user._id'))
 
     def __init__(self, merchant_name, date, subtotal, total_tax, total, pa_tax_paid):
         self.merchant_name = merchant_name
