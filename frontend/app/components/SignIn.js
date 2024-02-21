@@ -9,6 +9,7 @@ import {
     FlatList
 
 } from 'react-native';
+import { useGlobalContext } from './TabBarVisibilityContext';
 
 
 
@@ -47,12 +48,49 @@ const styles = StyleSheet.create({
 
 export default function SignIn({route, navigation}){
 
+
+    const { shouldFetchTotal, setShouldFetchTotal, currentUser, setCurrentUser, isSignIn, setIsSignIn } = useGlobalContext()
+
+    const IP = route.params?.IP;
+
+    console.log("kb", IP);
+
     const goToSignUp = () => {
         navigation.navigate("Q1")
     }
 
     const goToExistingSignIn = () => {
         navigation.navigate("ExistingSignin")
+    }
+
+    const onLogout = () => {
+
+        fetch(`http://${IP}:5001/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: {},
+        }).then((response) => {
+            // console.log(response)
+            return response.json();
+        })
+            // needed because above then returns
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((e) => {
+                console.log("Error logging out");
+                console.log(e);
+            });
+
+
+
+        setCurrentUser({});
+        setIsSignIn(false)
+
+
+
     }
 
     return (
@@ -82,6 +120,15 @@ export default function SignIn({route, navigation}){
                     <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
 
+
+                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                    <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }} onPress={onLogout}>
+                        <Text style={styles.buttonText}>Logout</Text>
+                        {/* <AntDesign name="right" size={20} style={{ marginRight: 10 }} /> */}
+                    </TouchableOpacity>
+
+
+                </View>
 
             </View>
 

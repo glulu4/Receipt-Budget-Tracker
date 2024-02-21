@@ -220,6 +220,9 @@ def get_specific_months_receipts():
         month = request.args.get('month')
 
 
+        ozs = get_current_month_total_ounces( year, month )
+
+
         # receipts = ReceiptModel.query.filter(
         #     extract('year', ReceiptModel.date) == year,
         #     extract('month', ReceiptModel.date) == month
@@ -231,10 +234,35 @@ def get_specific_months_receipts():
             extract('month', ReceiptModel.date) == month
         ).all()
 
-        return jsonify(receipts=[r.to_dict() for r in receipts]), 201
+        return jsonify(oz=ozs, receipts=[r.to_dict() for r in receipts]), 201
     else:
         return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
 
+
+
+def get_current_month_total_ounces(year=None, month=None):
+    current_user = get_current_user()
+    if current_user: 
+
+        if year is None or month is None:
+            current_year = datetime.now().year
+            current_month = datetime.now().month
+        else:
+            current_year = year
+            current_month = month
+
+
+        # Query to sum the ounces for all items in receipts of the current month
+        total_ounces = db.session.query(func.sum(Item.total_ounces))\
+                        .join(ReceiptModel, ReceiptModel._id == Item.receipt_id)\
+                        .filter(ReceiptModel.user_id == current_user._id,  # Filter by user ID
+                                extract('year', ReceiptModel.date) == current_year,
+                                extract('month', ReceiptModel.date) == current_month)\
+                        .scalar()
+        return total_ounces if total_ounces is not None else 0
+
+    else:
+        return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
 
 #DONE
 def get_month_total_spend(year=None, month=None):
@@ -264,64 +292,6 @@ def get_month_total_spend(year=None, month=None):
 
     else:
         return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
-
-
-
-
-# def get_current_months_total_spend():
-
-#     current_year = datetime.now().year
-#     current_month = datetime.now().month
-
-#     # Query to filter receipts from the current month
-#     this_months_receipts = ReceiptModel.query.filter(
-#         extract('year', ReceiptModel.date) == current_year,
-#         extract('month', ReceiptModel.date) == current_month
-#     ).all()
-
-#     total = 0.0
-#     for receipt in this_months_receipts:
-#         total += receipt.total
-    
-
-#     return total
-
-
-# def get_current_month_total_ounces():
-#     # Get the current date
-#     current_date = datetime.now()
-
-#     # Get the first and last day of the current month
-#     first_day_of_month = current_date.replace(day=1)
-#     last_day_of_month = current_date.replace(month=current_date.month % 12 + 1, day=1) - timedelta(days=1)
-
-#     # Query to sum the ounces for all items in receipts of the current month
-#     total_ounces = db.session.query(func.sum(Item.total_ounces))\
-#                     .join(Receipt, Receipt._id == Item.receipt_id)\
-#                     .filter(Receipt.date >= first_day_of_month, Receipt.date <= last_day_of_month)\
-#                     .scalar()
-
-#     return total_ounces if total_ounces is not None else 0
-
-#DONE
-def get_current_month_total_ounces():
-    current_user = get_current_user()
-    if current_user: 
-        current_year = datetime.now().year
-        current_month = datetime.now().month
-
-        # Query to sum the ounces for all items in receipts of the current month
-        total_ounces = db.session.query(func.sum(Item.total_ounces))\
-                        .join(ReceiptModel, ReceiptModel._id == Item.receipt_id)\
-                        .filter(ReceiptModel.user_id == current_user._id,  # Filter by user ID
-                                extract('year', ReceiptModel.date) == current_year,
-                                extract('month', ReceiptModel.date) == current_month)\
-                        .scalar()
-        return total_ounces if total_ounces is not None else 0
-
-    else:
-        return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
-
 
 # DONE
 @app.route('/get-stores', methods=["GET"])
@@ -452,7 +422,7 @@ def login():
 def logout():
 
 
-    if 'user' in session:
+    if "user" in session:
         session.pop('user', None)  # Clear the user from the session
         return jsonify(message = "Logged out"), 200
     else:
@@ -483,27 +453,7 @@ def store_exists_in_db(store_name):
         return False
 
 
-# def store_exists_in_db(store_name):
 
-#     if "user" in session:
-#         current_user = get_current_user()
-            
-#         try:
-#             # Query for the store by name
-#             user_stores = current_user.stores.all()
-#             for store in user_stores:
-#                 if store_name == store.name:
-#                     return True
-            
-#             # store = Stores.query.filter_by(name=store_name).first()
-#             # If store exists (not None), return True
-#             return False
-#         except Exception as e:
-#             print("Error checking store existence:", e)
-#             return False  # Return False if an error occurs
-    
-#     else:
-#         print("this shi brokn af")
 
 
 def analyze(image, new_receipt):

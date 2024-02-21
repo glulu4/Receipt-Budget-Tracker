@@ -91,10 +91,15 @@ const styles = StyleSheet.create({
 export default function ReceiptDisplay({route, navigation}){
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
-    const receipt = route.params.receipt;
+    const receipt = route.params?.receipt;
 
-    // const items = receipt.items
+    const items = receipt?.items
 
+
+    useEffect(() => {
+        console.log("in receipt display.js");
+
+    }, [])
     
 
     function formatDate(date){
@@ -111,68 +116,78 @@ export default function ReceiptDisplay({route, navigation}){
 
 
     }
-    useEffect(() => {
-        setIsTabBarVisible(false)
-    }, [])
+
 
     const goBack = () => {
         setIsTabBarVisible(true)
-        navigation.navigate("MonthlyScreen")
+        navigation.goBack()
+        // navigation.navigate("MonthlyScreen")
+        // navigation.navigate("Monthly", {
+        //     screen: "ReceiptDisplay",
+            
+        // })
+
+
     }
 
-    const items = [
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Fage",
-                "id_": 1,
-                "num_oz": null,
-                "price": 1.49,
-                "quantity": 7,
-                "total_price": 10.43
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Quest",
-                "id_": 2,
-                "num_oz": null,
-                "price": 9.49,
-                "quantity": 1,
-                "total_price": 7.48
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Gg eggs",
-                "id_": 3,
-                "num_oz": null,
-                "price": 2.59,
-                "quantity": 3,
-                "total_price": 7.77
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Legendaryfds",
-                "id_": 4,
-                "num_oz": null,
-                "price": 9.99,
-                "quantity": 1,
-                "total_price": 7.82
-            },
-            {
-                "case_size": null,
-                "category": null,
-                "description": "Halo top",
-                "id_": 5,
-                "num_oz": null,
-                "price": 0,
-                "quantity": 1,
-                "total_price": 4.69
-            },
-            // ... (additional items continue in the same format)
-        ]
+
+        
+        
+    
+
+    // const items = [
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Fage",
+    //             "id_": 1,
+    //             "num_oz": null,
+    //             "price": 1.49,
+    //             "quantity": 7,
+    //             "total_price": 10.43
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Quest",
+    //             "id_": 2,
+    //             "num_oz": null,
+    //             "price": 9.49,
+    //             "quantity": 1,
+    //             "total_price": 7.48
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Gg eggs",
+    //             "id_": 3,
+    //             "num_oz": null,
+    //             "price": 2.59,
+    //             "quantity": 3,
+    //             "total_price": 7.77
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Legendaryfds",
+    //             "id_": 4,
+    //             "num_oz": null,
+    //             "price": 9.99,
+    //             "quantity": 1,
+    //             "total_price": 7.82
+    //         },
+    //         {
+    //             "case_size": null,
+    //             "category": null,
+    //             "description": "Halo top",
+    //             "id_": 5,
+    //             "num_oz": null,
+    //             "price": 0,
+    //             "quantity": 1,
+    //             "total_price": 4.69
+    //         },
+    //         // ... (additional items continue in the same format)
+    //     ]
 
     const renderItem = ({ item }) => (
             <View style={styles.rowStyle}>

@@ -372,22 +372,13 @@ function HomePage({ route, navigation }) {
                     bar chart of each with a nice display, can click on each to expound
                 */}
 
-                <Text style={{
-                    fontSize: 30
-                }}
+                <Text style={{fontSize: 30}}
                 >Ounces: {totalOunces} oz</Text>
 
 
 
                 
-                <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                    <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }} onPress={onLogout}>
-                        <Text style={styles.buttonText}>Logout</Text>
-                        <AntDesign name="right" size={20} style={{ marginRight: 10 }} />
-                    </TouchableOpacity>
 
-
-                </View>
             </View>
 
 

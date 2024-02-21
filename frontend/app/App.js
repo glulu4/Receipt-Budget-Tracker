@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomePage from './components/HomePage';
-import Receipt from './components/Receipt';
+// import Receipt from './components/Receipt';
 import CameraPage from './components/CameraPage';
 import Loading from './components/Loading';
 import DataDisplay from './components/DataDisplay';
@@ -13,6 +13,8 @@ import DataDisplay from './components/DataDisplay';
 import Settings from './components/Settings';
 import Profile from './components/Profile';
 import Monthly from './components/Monthly';
+
+import Dummy from './components/Dummy';
 
 import ReceiptDisplay from './components/ReceiptDisplay';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -38,7 +40,7 @@ function App() {
     // const ip = '10.0.0.155'; // home 
     // const ip = '10.0.0.153'; // aba 
 
-    const ip = '192.168.5.122' // kennet 
+    // const ip = '192.168.5.122' // kennet 
     // const ip = '10.4.34.154' // cathy
 
     // const ip = '10.215.231.46' // panera 
@@ -49,7 +51,11 @@ function App() {
 
     // const ip = '10.5.46.147'; // lawrence
 
-    // const ip = '10.4.75.248' // cathy 2
+    const ip = '10.215.142.252' // cathy 2
+
+
+    // const ip = '10.5.64.143' // WPU
+    
     const HomeStack = createNativeStackNavigator();
     const ProfileStack = createNativeStackNavigator();
     const SettingsStack = createNativeStackNavigator();
@@ -63,8 +69,8 @@ function App() {
 
     function SignInScreen(){
         return ( 
-            <SignInStack.Navigator screenOptions={{ headerShown: false }}>
-                <SignInStack.Screen name="InitSignIn" component={SignIn} />
+            <SignInStack.Navigator screenOptions={{ headerShown: false }} >
+                <SignInStack.Screen name="InitSignIn" component={SignIn} initialParams={{ IP: ip }} />
                 <SignInStack.Screen name="Q1" component={Q1} initialParams={{ IP: ip }} />
                 <SignInStack.Screen name="Q2" component={Q2} initialParams={{ IP: ip }} />
                 <SignInStack.Screen name="Q3" component={Q3} initialParams={{ IP: ip }} />
@@ -80,7 +86,7 @@ function App() {
         return (
             <HomeStack.Navigator screenOptions={{ headerShown: false }}>
                 <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }} />
-                <HomeStack.Screen name="Receipts" component={Receipt} />
+                {/* <HomeStack.Screen name="Receipts" component={Receipt} /> */}
 
                 <HomeStack.Screen name="CameraPage" component={CameraPage} screenOptions={{ gestureEnabled: false, headerShown: false }} />
                 <HomeStack.Screen name="LoadingPage" component={Loading} initialParams={{ IP: ip }} />
@@ -90,12 +96,13 @@ function App() {
     }
     function MonthlyStackScreen() {
         return (
-            <MonthlyStack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
+            <MonthlyStack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }} >
                 <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} initialParams={{ IP: ip }} options={{
                     gestureEnabled: false, // Disable swipe back gesture
                 }} />
-                <MonthlyStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ IP: ip }} />
+                {/* <MonthlyStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ IP: ip }} />
 
+                <MonthlyStack.Screen name="Dummy" component={Dummy} initialParams={{ IP: ip }} /> */}
                 {/* other screens in the profile stack */}
             </MonthlyStack.Navigator>
         );
@@ -113,7 +120,7 @@ function App() {
     function ProfileStackScreen() {
         return (
             <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
-                <ProfileStack.Screen name="ProfilePage" component={Profile} />
+                <ProfileStack.Screen name="ProfilePage" component={Profile} initialParams={{ IP: ip }} />
                 {/* other screens in the profile stack */}
             </ProfileStack.Navigator>
         );
@@ -127,12 +134,13 @@ function App() {
         return (
             <Tab.Navigator 
                 initialRouteName="Home" 
-                screenOptions={{
-                    title: 'My home',
-                    headerStyle: {
-                    backgroundColor: 'pink',
-                },
-            }} 
+                screenOptions={{ headerShown: false, gestureEnabled: false }}
+            //     screenOptions={{
+            //         title: 'My home',
+            //         headerStyle: {
+            //         backgroundColor: 'pink',
+            //     },
+            // }} 
             tabBar={props => <TabBar {...props} />}>
                 <Tab.Screen name="Home" component={HomeStackScreen} />
                 <Tab.Screen name="Monthly" component={MonthlyStackScreen} />
@@ -146,13 +154,24 @@ function App() {
 
     return (
         <NavigationContainer>
-            <RootStack.Navigator screenOptions={{ headerShown: false }}>
+            <RootStack.Navigator screenOptions={{
+                gestureEnabled: false,
+                headerShown: isSignIn, 
+                title: 'My home', 
+                headerStyle: {
+                    backgroundColor: 'pink',
+                },
+                 }}>
                 {isSignIn ? (
                     <>
                         <RootStack.Screen name="MainApp" component={MainApp} initialParams={{ IP: ip }} />
                         <RootStack.Screen name="LoadingPage" component={Loading} initialParams={{ IP: ip }} />
                         <RootStack.Screen name="CameraPage" component={CameraPage} initialParams={{ IP: ip }} />
                         <RootStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ IP: ip }}   />
+
+                        <RootStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ IP: ip }} />
+
+                        <RootStack.Screen name="Dummy" component={Dummy} initialParams={{ IP: ip }} />
                         {/* <RootStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }} /> */}
                         {/* Other global screens can be added here */}
                     </>
@@ -163,12 +182,6 @@ function App() {
         </NavigationContainer>
     );
 
-
-    // return (
-    //         <NavigationContainer>
-    //         {content}
-    //         </NavigationContainer>
-    // );
 
 
 }

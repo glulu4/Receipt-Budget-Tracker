@@ -12,12 +12,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import * as ImagePicker from 'react-native-image-picker';
-import { TapGesture } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
-import { useCameraPermission, Camera } from 'react-native-vision-camera';
+import { Camera } from 'react-native-vision-camera';
 
 import Feather from 'react-native-vector-icons/Feather';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import { useNavigationState } from '@react-navigation/native';
 
 
 
@@ -271,7 +269,8 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
     return (
         
         <>
-            {isTabBarVisible &&  (<>
+            {isTabBarVisible &&  (
+            <>
                 <Animated.View style={[styles.container, rnStyle]} />
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key];

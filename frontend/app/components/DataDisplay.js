@@ -173,13 +173,16 @@ export default function DataDisplay({ navigation, route }) {
     // receipt = t
 
     const storeList = route.params?.storeList;
-
     const r = route.params?.receiptData;
+
+
+    console.log("r", r);
 
     let receipt = null;
     if (r) {
 
         for (let item of r) {
+
             if (!item.message) {
                 receipt = item
             }
@@ -356,16 +359,42 @@ export default function DataDisplay({ navigation, route }) {
 
     const formatDate = (date) => {
 
+        console.log("date", date);
+
         if (date) {
-            const dateObj = new Date(date + 'T00:00:00');
-            return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(dateObj);
 
-        }
-        else {
-            return "Need to fix lol "
+
+
+            const dateObj = new Date(date);
+            dateObj.setDate(dateObj.getDate() + 1);
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                month: 'short', // Abbreviated month name (e.g., "Jan")
+                day: 'numeric', // Numeric day
+                year: 'numeric' // Numeric year
+            });
+
+            console.log(formattedDate);
+            return formattedDate
         }
 
-        // add try catch
+        else{
+            const date = receipt ? receipt.date : "No date found";
+            console.log("Date from receipt:", date);
+
+            const dateObj = new Date(date);
+            dateObj.setDate(dateObj.getDate() + 1);
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                month: 'short', // Abbreviated month name (e.g., "Jan")
+                day: 'numeric', // Numeric day
+                year: 'numeric' // Numeric year
+            });
+            return formattedDate
+        }
+
+       
+
+
+
     }
 
 
@@ -451,7 +480,7 @@ export default function DataDisplay({ navigation, route }) {
             }}>
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Date: </Text>
-                    {/* <Text style={styles.bottomData}>{formatDate(r[0].date)}</Text> */}
+                    <Text style={styles.bottomData}>{formatDate(r[0].date)}</Text>
                 </View>
 
                 <View style={styles.bottomRow}>

@@ -49,8 +49,9 @@ class Stores(db.Model):
     name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user._id'))
 
-    def __init__( self, name):
+    def __init__( self, name, user_id):
         self.name=name
+        self.user_id = user_id
     
     def to_dict(self):
         return {
@@ -72,13 +73,14 @@ class Receipt(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user._id'))
 
-    def __init__(self, merchant_name, date, subtotal, total_tax, total, pa_tax_paid):
+    def __init__(self, merchant_name, date, subtotal, total_tax, total, pa_tax_paid, user_id):
         self.merchant_name = merchant_name
         self.date = date
         self.subtotal = subtotal
         self.total_tax = total_tax
         self.total = total
         self.pa_tax_paid = pa_tax_paid
+        self.user_id = user_id
 
     def add_item(self, item):
         self.items.append(item)

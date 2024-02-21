@@ -10,7 +10,7 @@ const Profile = ({route, navigation}) => {
 
 
     console.log(IP);
-    const { isUserSignedIn, setIsUserSignedIn, setCurrentUser, currentUser } = useGlobalContext()
+    const { isSignIn, setIsSignIn, setCurrentUser, currentUser } = useGlobalContext()
 
 
     const styles = StyleSheet.create({
@@ -46,6 +46,21 @@ const Profile = ({route, navigation}) => {
         },
         icon:{
             marginTop:50
+        },
+        rowButton:{
+            shadowColor: '#000000',
+            shadowOpacity: 0.05,
+            shadowOffset: {
+                width: 10,
+                height: 10,
+            },
+
+            flex: 1,
+            backgroundColor: 'white',
+            borderRadius: 5,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
         }
 
     })
@@ -62,21 +77,21 @@ const Profile = ({route, navigation}) => {
             // console.log(response)
             return response.json();
         })
-        // needed because above then returns
+            // needed because above then returns
             .then((data) => {
                 console.log(data);
-        })
-        .catch((e) => {
-            console.log("Error logging out");
-            console.log(e);
-        });
+            })
+            .catch((e) => {
+                console.log("Error logging out");
+                console.log(e);
+            });
 
 
 
         setCurrentUser({});
-        setIsUserSignedIn(false)
-        
-        
+        setIsSignIn(false)
+
+
 
     }
 
@@ -97,14 +112,34 @@ const Profile = ({route, navigation}) => {
 
             </View>
 
+        
             <View style={{ flexDirection:'row', marginTop:20 }}>
-                <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent:'space-between', alignItems:'center',  }} onPress={onLogout}>
+                <TouchableOpacity style={styles.rowButton} onPress={onLogout}>
                     <Text style={styles.buttonText}>Logout</Text>
                     <AntDesign name="right" size={20} style={{marginRight:10}}/>
                 </TouchableOpacity>
 
-               
+            
             </View>
+
+            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <TouchableOpacity style={styles.rowButton} >
+                    <Text style={styles.buttonText}>Change Email</Text>
+                    <AntDesign name="right" size={20} style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+
+
+            </View>
+
+            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <TouchableOpacity style={styles.rowButton} >
+                    <Text style={styles.buttonText}>Change Password</Text>
+                    <AntDesign name="right" size={20} style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+
+
+            </View>
+            
 
 
 

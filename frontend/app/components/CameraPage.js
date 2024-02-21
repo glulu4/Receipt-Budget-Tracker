@@ -46,7 +46,7 @@ function CameraPage({navigation}) {
 
     useEffect( () => {
         if (finishClicked) {
-            navigation.navigate("Loading-Page", { photos: photoList });
+            navigation.navigate("LoadingPage", { photos: photoList });
         }
     }, [finishClicked, photoList ])
 
