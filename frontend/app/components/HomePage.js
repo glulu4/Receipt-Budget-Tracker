@@ -29,17 +29,16 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 function HomePage({ route, navigation }) {
 
     const { shouldFetchTotal, setShouldFetchTotal, currentUser, setCurrentUser, isSignIn, setIsSignIn } = useGlobalContext()
-    const [totalSpend, setTotalSpend] = useState(0)
-    const [totalOunces, setTotalOunces] = useState(0)
+    const [totalSpend, setTotalSpend] = useState(0);
+    const [totalOunces, setTotalOunces] = useState(0);
+    const [taxableOz, setTaxableOz] = useState(0);
 
 
-    // console.log("routee", route.params.renderMessage);
 
     console.log("yo bitch", currentUser)
 
-    const [renderMsg, setRenderMsg] = useState(route.params.renderMessage)
+    // const [renderMsg, setRenderMsg] = useState(route.params.renderMessage)
 
-    // console.log("renderMsg", renderMsg);
 
 
     const { isTabBarVisible } = useGlobalContext();
@@ -61,24 +60,24 @@ function HomePage({ route, navigation }) {
 
 
 
-    console.log("route.params.renderMessage", route.params.renderMessage);
+    // console.log("route.params.renderMessage", route.params.renderMessage);
 
-    useEffect(() => {
-        if (route.params.renderMessage) {
-            setRenderMsg(true); // Show the message
-            fadeAnim.setValue(1); // Reset animation to visible state
-        }
-    }, [route.params.renderMessage]);
+    // useEffect(() => {
+    //     if (route.params.renderMessage) {
+    //         setRenderMsg(true); // Show the message
+    //         fadeAnim.setValue(1); // Reset animation to visible state
+    //     }
+    // }, [route.params.renderMessage]);
 
-    useEffect(() => {
-        // When showSuccessMessage is true, start the fade out animation
-        if (renderMsg) {
-            const timer = setTimeout(() => {
-                fadeOut();
-            }, 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [renderMsg]);
+    // useEffect(() => {
+    //     // When showSuccessMessage is true, start the fade out animation
+    //     if (renderMsg) {
+    //         const timer = setTimeout(() => {
+    //             fadeOut();
+    //         }, 2000);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [renderMsg]);
 
     useEffect(() => {
         setIsTabBarVisible(true)
@@ -114,10 +113,6 @@ function HomePage({ route, navigation }) {
         const date = new Date().toDateString()
 
         let d = date.split(" ")
-
-        // setMonth( d[1] )
-
-
         let newDate = ''
         index = 0
         for (let item of d) {
@@ -229,24 +224,7 @@ function HomePage({ route, navigation }) {
 
 
 
-    const queryDb = async () => {
-        fetch(`http://${IP}:5001/get-receipt`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Receipts:', data);
 
-                // Here you can do something with the received data
-            })
-            .catch(error => {
-                console.error('There was an error fetching the total', error);
-            });
-        
-    }
 
     const getCurrentMonthsTotalSpend = async () => {
 
@@ -257,9 +235,19 @@ function HomePage({ route, navigation }) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log("we out here");
+            console.log("we out here", data);
+            let tax_oz = data.total_ounces.taxed_ounces
+            let total_oz = data.total_ounces.total_ounces
+            let total_spent = data.total_spent
+
+            // console.log("taxed: ", data.total_ounces.taxed_ounces)
+            // console.log("total_ounces: ", data.total_ounces.total_ounces)
+
+
             setTotalSpend(data.total_spent)
-            setTotalOunces(data.total_ounces)
+            setTotalOunces(total_oz)
+            setTaxableOz(total_oz - tax_oz)
+
             
         } 
         catch (error) {
@@ -292,35 +280,7 @@ function HomePage({ route, navigation }) {
         
     }
 
-    const onLogout = () => {
 
-        fetch(`http://${IP}:5001/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: {},
-        }).then((response) => {
-            // console.log(response)
-            return response.json();
-        })
-            // needed because above then returns
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((e) => {
-                console.log("Error logging out");
-                console.log(e);
-            });
-
-
-
-        setCurrentUser({});
-        setIsSignIn(false)
-
-
-
-    }
 
     return (
         <View style={styles.container}>
@@ -349,31 +309,29 @@ function HomePage({ route, navigation }) {
 
             </View>
 
-            {renderMsg || route.params.renderMessage
+            {/* {renderMsg || route.params.renderMessage
             ? 
             <Animated.View style={styles.successModal}>
                 <Text style={{ color: "green", fontSize: 40, textAlign: 'center' }}>Success Message!</Text>
                 <Feather name="check" size={24} color="green" />
             </Animated.View>
             
-            : console.log("broski")}
+            : console.log("broski")} */}
             
 
            
 
             <View>
 
-                <Text style={{
-                    fontSize: 30
-                }}
-                >{months[(new Date()).getMonth() ] }'s Expenses: {formatTotalSpend()}</Text>
 
                 {/* below ill have each categories spend total
                     bar chart of each with a nice display, can click on each to expound
                 */}
 
-                <Text style={{fontSize: 30}}
-                >Ounces: {totalOunces} oz</Text>
+                <Text style={{fontSize: 30}}>Total Oz: {totalOunces} oz</Text>
+                <Text style={{ fontSize: 30 }}>Taxable Oz: {taxableOz} oz</Text>
+                <Text style={{ fontSize: 30 }}>{months[(new Date()).getMonth()]}'s Expenses: {formatTotalSpend()}</Text>
+
 
 
 

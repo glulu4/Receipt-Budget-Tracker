@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     },
     listStyle:{
         margin:20,
+
     },
     storeName:{
         fontSize:25, 
@@ -173,7 +174,8 @@ const Monthly = ({route, navigation}) => {
     const { setIsTabBarVisible } = useGlobalContext();
     const [receipts, setReceipts] = useState(null);
 
-    const [oz, setOz] = useState("")
+    const [totalOunces, setTotalOunces] = useState(0);
+    const [taxableOz, setTaxableOz] = useState(0);
     const IP = route.params.IP;
 
 
@@ -265,9 +267,13 @@ const Monthly = ({route, navigation}) => {
         fetch(`http://${IP}:5001/get-specific-months-receipts?year=${year}&month=${month}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Process your data here
+                console.log("dayta", data); // Process your data here
                 setReceipts(data.receipts)
-                setOz(data.oz)
+
+                let taxed_oz = data.oz.taxed_ounces
+                let total_oz = data.oz.total_ounces
+                setTotalOunces(total_oz)
+                setTaxableOz(total_oz - taxed_oz)
 
                 console.log("YURRR");
                 setShowList(true)
@@ -303,13 +309,23 @@ const Monthly = ({route, navigation}) => {
                 receipts?.length === 0 ? 
                     <View style={styles.listHeaderView}>
                         <Text style={styles.listHeader}>No Receipts from {formatDate(date)}</Text> 
-                </View> :
+                    </View> 
+                    :
                     showList && 
                     <View style={styles.listStyle}>
-                            <Text style={styles.listHeader}>Receipts from {formatDate(date)}</Text>
-                            <Text style={styles.ozHeader}>{oz} taxable oz's from {formatDate(date)}</Text>
 
-                            <OldReceiptList receipts={receipts} navigation={navigation} />
+
+                        <View style={{borderBottomColor: 'red',borderBottomWidth: 0, width:'auto'}}>
+                            <Text style={styles.listHeader}>Receipts from {formatDate(date)}</Text>
+                        </View>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', margin: 5, borderBottomColor: '#77c3ec', borderBottomWidth: 2, width: 'auto', paddingBottom:10 }}>
+                            <Text style={styles.ozHeader}>{totalOunces} Oz</Text>
+                            <Text style={styles.ozHeader}>{taxableOz} taxable Oz</Text>
+                        </View>
+
+
+                        <OldReceiptList receipts={receipts} navigation={navigation} />
                     </View>
                 }
 

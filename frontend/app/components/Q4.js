@@ -30,10 +30,10 @@ const Q4 = ({ navigation, route }) => {
             <QuestionPage
                 qid="email"
                 question="Email"
-                onAnswer={handleResponse} // Simplified for clarity
+                onAnswer={handleResponse} 
                 nextPage="Q5"
-                navigation={navigation} // Passing navigation prop to QuestionPage
-                responses={responses} // Passing current responses to QuestionPage
+                navigation={navigation} 
+                responses={responses} 
                 route={route}
             />
         </View>

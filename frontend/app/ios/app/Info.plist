@@ -34,7 +34,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>The camera is accessed for the first time</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>The microphone is accessed for the first time</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -60,6 +60,42 @@
 		<string>Octicons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
+		<string>Barlow Condensed Black Italic.ttf</string>
+		<string>Barlow Condensed Black.ttf</string>
+		<string>Barlow Condensed Bold Italic.ttf</string>
+		<string>Barlow Condensed Bold.ttf</string>
+		<string>Barlow Condensed ExtraBold Italic.ttf</string>
+		<string>Barlow Condensed ExtraBold.ttf</string>
+		<string>Barlow Condensed ExtraLight Italic.ttf</string>
+		<string>Barlow Condensed ExtraLight.ttf</string>
+		<string>Barlow Condensed Italic.ttf</string>
+		<string>Barlow Condensed Light Italic.ttf</string>
+		<string>Barlow Condensed Light.ttf</string>
+		<string>Barlow Condensed Medium Italic.ttf</string>
+		<string>Barlow Condensed Medium.ttf</string>
+		<string>Barlow Condensed Regular.ttf</string>
+		<string>Barlow Condensed SemiBold Italic.ttf</string>
+		<string>Barlow Condensed SemiBold.ttf</string>
+		<string>Barlow Condensed Thin Italic.ttf</string>
+		<string>Barlow Condensed Thin.ttf</string>
+		<string>Montserrat Black Italic.ttf</string>
+		<string>Montserrat Black.ttf</string>
+		<string>Montserrat Bold Italic.ttf</string>
+		<string>Montserrat Bold.ttf</string>
+		<string>Montserrat ExtraBold Italic.ttf</string>
+		<string>Montserrat ExtraBold.ttf</string>
+		<string>Montserrat ExtraLight Italic.ttf</string>
+		<string>Montserrat ExtraLight.ttf</string>
+		<string>Montserrat Italic.ttf</string>
+		<string>Montserrat Light Italic.ttf</string>
+		<string>Montserrat Light.ttf</string>
+		<string>Montserrat Medium Italic.ttf</string>
+		<string>Montserrat Medium.ttf</string>
+		<string>Montserrat Regular.ttf</string>
+		<string>Montserrat SemiBold Italic.ttf</string>
+		<string>Montserrat SemiBold.ttf</string>
+		<string>Montserrat Thin Italic.ttf</string>
+		<string>Montserrat Thin.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

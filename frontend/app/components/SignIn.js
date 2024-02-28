@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, Platform } from 'react';
 import {
     View,
     SafeAreaView,
@@ -30,15 +30,20 @@ const styles = StyleSheet.create({
         // borderColor: '#77c3ec',
         // backgroundColor: 'pink',
 
+        
 
 
     },
     buttonText: {
-        color: 'royalblue',
-        fontSize: 30,
+        color: '#2496ff',
+        fontSize: 35,
         fontWeight: '400',
         alignSelf: 'center',
-        margin: 15,
+        margin: 20,
+        // fontFamily:"Barlow Condensed",
+        fontFamily:'Montserrat Bold',
+        
+        
         
     },
 })
@@ -53,7 +58,8 @@ export default function SignIn({route, navigation}){
 
     const IP = route.params?.IP;
 
-    console.log("kb", IP);
+
+
 
     const goToSignUp = () => {
         navigation.navigate("Q1")
@@ -124,13 +130,11 @@ export default function SignIn({route, navigation}){
                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }} onPress={onLogout}>
                         <Text style={styles.buttonText}>Logout</Text>
-                        {/* <AntDesign name="right" size={20} style={{ marginRight: 10 }} /> */}
                     </TouchableOpacity>
-
-
                 </View>
 
             </View>
+
 
         </View>
     )

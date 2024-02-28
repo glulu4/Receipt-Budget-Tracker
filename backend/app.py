@@ -253,13 +253,33 @@ def get_current_month_total_ounces(year=None, month=None):
 
 
         # Query to sum the ounces for all items in receipts of the current month
-        total_ounces = db.session.query(func.sum(Item.total_ounces))\
-                        .join(ReceiptModel, ReceiptModel._id == Item.receipt_id)\
-                        .filter(ReceiptModel.user_id == current_user._id,  # Filter by user ID
-                                extract('year', ReceiptModel.date) == current_year,
-                                extract('month', ReceiptModel.date) == current_month)\
-                        .scalar()
-        return total_ounces if total_ounces is not None else 0
+        # total_ounces = db.session.query(func.sum(Item.total_ounces))\
+        #                 .join(ReceiptModel, ReceiptModel._id == Item.receipt_id)\
+        #                 .filter(ReceiptModel.user_id == current_user._id,  # Filter by user ID
+        #                         extract('year', ReceiptModel.date) == current_year,
+        #                         extract('month', ReceiptModel.date) == current_month)\
+        #                 .scalar()
+        # return total_ounces if total_ounces is not None else 0
+            
+        total_ounces_query = db.session.query(
+            func.sum(Item.total_ounces)
+        ).join(
+            ReceiptModel, ReceiptModel._id == Item.receipt_id
+        ).filter(
+            ReceiptModel.user_id == current_user._id,  # Filter by user ID
+            extract('year', ReceiptModel.date) == current_year,
+            extract('month', ReceiptModel.date) == current_month
+        )
+
+        total_ounces = total_ounces_query.scalar() or 0
+
+        # Query to sum the ounces for taxed items in receipts of the current month
+        taxed_ounces = total_ounces_query.filter(ReceiptModel.pa_tax_paid == True).scalar() or 0
+
+        return {
+            'total_ounces': total_ounces,
+            'taxed_ounces': taxed_ounces
+        }
 
     else:
         return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized

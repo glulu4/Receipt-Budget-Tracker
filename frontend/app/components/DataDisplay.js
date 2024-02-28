@@ -14,6 +14,7 @@ import {
     Button,
     TouchableWithoutFeedback,
     Keyboard,
+    Switch,
 
 } from 'react-native';
 
@@ -41,12 +42,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: 20,
+        margin: 15,
+        // borderBottomWidth: 3,
+        // borderBottomColor: 'white',
+        zIndex: 0,
+
+    },
+    firstrowStyle:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 20,
         padding: 20,
         borderBottomWidth: 3,
         borderBottomColor: 'white',
         zIndex: 0,
-
     },
+
     item: {
         margin: 10,
         fontSize: 20
@@ -91,7 +103,24 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         alignSelf: 'center',
-        margin: 15
+        margin: 10
+    },
+    itemList:{
+        
+        backgroundColor: '#EEE8E9',
+        // backgroundColor:'#ACECF7',
+        borderRadius: 6,
+        margin: 5,
+        zIndex: 0
+
+
+    
+    },
+    errorMsg: {
+        textAlign: "center",
+        fontSize: 20,
+        color: '#b33a3a'
+
     },
 
 })
@@ -103,74 +132,10 @@ export default function DataDisplay({ navigation, route }) {
 
     console.log("In Datadisplay.js");
 
-
-    // let t = {
-    //     "date": "2024-01-01",
-    //     "items": [
-    //         {
-    //             "case_size": null,
-    //             "category": null,
-    //             "description": "Fage",
-    //             "id_": 1,
-    //             "num_oz": null,
-    //             "price": 1.49,
-    //             "quantity": 7,
-    //             "total_price": 10.43
-    //         },
-    //         {
-    //             "case_size": null,
-    //             "category": null,
-    //             "description": "Quest",
-    //             "id_": 2,
-    //             "num_oz": null,
-    //             "price": 9.49,
-    //             "quantity": 1,
-    //             "total_price": 7.48
-    //         },
-    //         {
-    //             "case_size": null,
-    //             "category": null,
-    //             "description": "Gg eggs",
-    //             "id_": 3,
-    //             "num_oz": null,
-    //             "price": 2.59,
-    //             "quantity": 3,
-    //             "total_price": 7.77
-    //         },
-    //         {
-    //             "case_size": null,
-    //             "category": null,
-    //             "description": "Legendaryfds",
-    //             "id_": 4,
-    //             "num_oz": null,
-    //             "price": 9.99,
-    //             "quantity": 1,
-    //             "total_price": 7.82
-    //         },
-    //         {
-    //             "case_size": null,
-    //             "category": null,
-    //             "description": "Halo top",
-    //             "id_": 5,
-    //             "num_oz": null,
-    //             "price": 0,
-    //             "quantity": 1,
-    //             "total_price": 4.69
-    //         },
-    //         // ... (additional items continue in the same format)
-    //     ],
-    //     "merchant_name": null,
-    //     "pa_tax_paid": false,
-    //     "subtotal": 145.18,
-    //     "total": 146.71,
-    //     "total_tax": 1.53
-    // }
-
-
     const [errorMsg, setErrorMsg] = useState("")
     const [drinkError, setDrinkError] = useState(false)
 
-    // receipt = t
+
 
     const storeList = route.params?.storeList;
     const r = route.params?.receiptData;
@@ -198,6 +163,10 @@ export default function DataDisplay({ navigation, route }) {
         receipt = r[0];
     }
 
+    console.log("receipt", receipt);
+
+    // combine here lol
+
 
     const [items, setItems] = useState(receipt.items); // Assuming this will be populated from your data source
     const [isModalVisible, setModalVisible] = useState(false);
@@ -208,8 +177,14 @@ export default function DataDisplay({ navigation, route }) {
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
 
+
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
     // const [storeList, setStoreList] = useState([])
 
+
+    console.log(isEnabled);
 
     useEffect(() => {
         setIsTabBarVisible(false)
@@ -306,11 +281,12 @@ export default function DataDisplay({ navigation, route }) {
             ...receipt, // spread the receipt
             merchant_name:storeName,
             items: items,
+            pa_tax_paid: isEnabled,
+
         }
 
-        console.log("body", body);
+        // console.log("body", body);
 
-        // return;
 
 
         fetch(`http://${IP}:5001/add-to-db`, {
@@ -425,7 +401,7 @@ export default function DataDisplay({ navigation, route }) {
                
 
 
-                    <View style={styles.rowStyle}>
+                    <View style={styles.firstrowStyle}>
                         <Text style={styles.item}>{String(item.quantity)}</Text>
                         <Text style={styles.item}>{item.description}</Text>
                     </View>
@@ -450,19 +426,12 @@ export default function DataDisplay({ navigation, route }) {
             </View>
             <GestureHandlerRootView style={{ flex: 1 }}>
 
-            <FlatList
-                data={items}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
-                style={{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 6,
-                    margin:5,
-                    zIndex:0
-
-
-                }}
-            />
+                <FlatList
+                    data={items}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    style={styles.itemList}
+                />
             </GestureHandlerRootView>
 
             {isModalVisible && (
@@ -474,31 +443,43 @@ export default function DataDisplay({ navigation, route }) {
                 />
             )}
             <View style={{
-                paddingTop: 80,
-                marginBottom: 30,
+                paddingTop: 50,
+                marginBottom: 10,
                 alignSelf: 'center'
             }}>
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Date: </Text>
                     <Text style={styles.bottomData}>{formatDate(r[0].date)}</Text>
                 </View>
-
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Subtotal: </Text>
                     <Text style={styles.bottomData}>${receipt.subtotal}</Text>
                 </View>
-
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Total Tax: </Text>
                     <Text style={styles.bottomData}>${receipt.total_tax}</Text>
                 </View>
-
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Total: </Text>
                     <Text style={styles.bottomData}>${receipt.total}</Text>
                 </View>
+                <View style={styles.bottomRow}>
+                    <Text style={styles.bottomPrefix}>PA Tax: </Text>
+                    <View style={{ marginTop: 1 }}>
+                        <Switch
+                        
+                            trackColor={{ false: '#767577', true: '#4f90ff' }}
+                            thumbColor={isEnabled ? 'white' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleSwitch}
+                            value={isEnabled}
+                        />
+                    </View>
+                </View>
 
-                {drinkError && <Text>{errorMsg}</Text>}
+                {drinkError && <Text style={styles.errorMsg}>{errorMsg}</Text>}
+
+
 
                 <TouchableOpacity
                     style={styles.buttonStyle}

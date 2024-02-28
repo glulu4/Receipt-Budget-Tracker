@@ -31,42 +31,7 @@ export default function ExistingSignin({route, navigation}){
 
     const IP = route.params?.IP;
 
-    const { width } = Dimensions.get('window');
 
-
-    console.log("mio", IP);
-
-
-
-    useEffect(() => {
-
-        if (email.length === 0) {
-            setEmailBorderColor('black')
-            
-
-        }
-
-
-        if (email.length > 0 && emailBorderColor === "#b33a3a") {
-            setEmailBorderColor('#4bb543')
-
-        }
-
-        if (password.length === 0) {
-            setPasswordBorderColor('black')
-            
-
-        }
-
-
-        if (password.length > 0 && passwordBorderColor === "#b33a3a") {
-            setPasswordBorderColor('#4bb543')
-
-        }
-
-
-
-    }, [email, password])
     const handleSubmit = () => {
 
  
@@ -77,18 +42,22 @@ export default function ExistingSignin({route, navigation}){
             return;
         }
 
-        if (!email && password){
-            setPasswordBorderColor('#4bb543')
+        else if (!email && password){
+            setPasswordBorderColor('black')
             setEmailBorderColor("#b33a3a") // red
             return;
         }
 
 
-        if (email && !password) {
+        else if (email && !password) {
             setPasswordBorderColor("#b33a3a")
-            setEmailBorderColor('#4bb543') // red
+            setEmailBorderColor('black') // red
 
             return;
+        }
+        else{
+            setEmailBorderColor("black");
+            setPasswordBorderColor("black");
         }
 
 
@@ -184,6 +153,8 @@ export default function ExistingSignin({route, navigation}){
             marginBottom: 0,
             fontSize: 30,
             fontWeight: '300',
+            fontFamily:'Montserrat Bold',
+            fontWeight: '400',
         },
         questionBox: {
             marginBottom: 30
@@ -191,7 +162,9 @@ export default function ExistingSignin({route, navigation}){
         errorMsg:{
             textAlign:"center",
             fontSize:20,
-            color:'#b33a3a'
+            color:'#b33a3a',
+            fontFamily: 'Montserrat Bold',
+
 
         }
 

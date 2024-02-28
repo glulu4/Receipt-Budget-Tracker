@@ -18,6 +18,11 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
     const IP = route.params?.IP;
 
 
+    const [showErrorMsg, setShowErrorMsg] = useState(false)
+
+    const [errMsg, setErrMsg] = useState("")
+
+
     useEffect(() => {
 
         if (answer.length === 0){
@@ -40,10 +45,35 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
 
     const handleSubmit = async () => {
 
-        if (answer.length === 0){
+        if (answer.length === 0) {
             setBorderColor('#b33a3a')
             return;
         }
+        else{
+            setBorderColor('black')
+
+        }
+
+        if (question === "Email" && (!answer.includes("@") || !answer.includes("."))  ){
+            console.log("jgv");
+            setShowErrorMsg(true)
+            setErrMsg("Invalid Email")
+            return;
+
+        }
+
+
+        if (question === "Password" && answer.length < 8){
+            setShowErrorMsg(true)
+            setErrMsg("Password is not long enough")
+            return;
+        }
+        else {
+            setShowErrorMsg(false); // Reset error message when valid
+        }
+
+
+
 
         if (onAnswer) {
             onAnswer(qid, answer);
@@ -132,8 +162,19 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
         questionText: {
             textAlign: 'center',
             marginBottom: 20,
-            fontSize: 30,
+            fontSize: 35,
             fontWeight: '300',
+            fontFamily: 'Montserrat',
+            fontWeight: '400',
+        },
+        errorMsg: {
+            textAlign: "center",
+            fontSize: 20,
+            color: '#b33a3a'
+
+        },
+        errorBox:{
+            margin:20
         }
     });
     
@@ -150,6 +191,12 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <AntDesign name="arrowright" size={30} />
             </TouchableOpacity>
+
+
+            <View style={styles.errorBox}>
+                {/* <Text style={styles.errorMsg}>suck it</Text> */}
+                {showErrorMsg && <Text style={styles.errorMsg}>{errMsg}</Text>}
+            </View>
         </View>
     );
 
