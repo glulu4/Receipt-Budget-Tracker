@@ -161,6 +161,7 @@ function App() {
                 headerStyle: {
                     backgroundColor: 'pink',
                 },
+                headerBackVisible: false,
                  }}>
                 {isSignIn ? (
                     <>

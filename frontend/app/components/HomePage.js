@@ -35,7 +35,7 @@ function HomePage({ route, navigation }) {
 
 
 
-    console.log("yo bitch", currentUser)
+    console.log("yo", currentUser)
 
     // const [renderMsg, setRenderMsg] = useState(route.params.renderMessage)
 

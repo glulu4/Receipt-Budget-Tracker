@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 
     },
     listHeaderView:{
-        borderBottomColor: 'red',
+        borderBottomColor: '#77c3ec',
         borderBottomWidth: 2,
     },
     receiptRow: {
@@ -99,6 +99,15 @@ const styles = StyleSheet.create({
         marginLeft:30,
         fontSize:20,
         fontWeight:'400'
+    },
+    listHeaderWith: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-around', 
+        margin: 5, 
+        borderBottomColor: '#77c3ec', 
+        borderBottomWidth: 2, 
+        width: 'auto', 
+        paddingBottom: 10 
     }
 
 })
@@ -319,7 +328,7 @@ const Monthly = ({route, navigation}) => {
                             <Text style={styles.listHeader}>Receipts from {formatDate(date)}</Text>
                         </View>
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', margin: 5, borderBottomColor: '#77c3ec', borderBottomWidth: 2, width: 'auto', paddingBottom:10 }}>
+                            <View style={styles.listHeaderWith}>
                             <Text style={styles.ozHeader}>{totalOunces} Oz</Text>
                             <Text style={styles.ozHeader}>{taxableOz} taxable Oz</Text>
                         </View>

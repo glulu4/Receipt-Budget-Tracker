@@ -163,12 +163,15 @@ export default function DataDisplay({ navigation, route }) {
         receipt = r[0];
     }
 
-    console.log("receipt", receipt);
+    // console.log("receipt", receipt);
+
+    let con = condenseList(receipt.items)
+    // console.log("condensed ", con);
 
     // combine here lol
 
 
-    const [items, setItems] = useState(receipt.items); // Assuming this will be populated from your data source
+    const [items, setItems] = useState( (con) ); // Assuming this will be populated from your data source
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -184,7 +187,35 @@ export default function DataDisplay({ navigation, route }) {
     // const [storeList, setStoreList] = useState([])
 
 
-    console.log(isEnabled);
+    function condenseList(items) {
+        const condensedList = {};
+
+        items.forEach(item => {
+            const { description, price, total_price, quantity } = item;
+            let individualCost = 0;
+            if (quantity === 1){
+                individualCost = total_price
+            }
+            else{
+                individualCost = price
+            }
+            // check for total_price and 
+            const key = `${description}_${individualCost}`;
+
+            if (condensedList[key]) {
+                condensedList[key].quantity += item.quantity;
+                condensedList[key].num_oz += item.num_oz || 0; // Sum num_oz if defined
+                condensedList[key].price = individualCost
+                condensedList[key].total_price += total_price
+            } else {
+                condensedList[key] = { ...item }; // Copy the item
+                // delete condensedList[key].id_; // Remove the id_ property
+            }
+        });
+
+        return Object.values(condensedList);
+    }
+
 
     useEffect(() => {
         setIsTabBarVisible(false)

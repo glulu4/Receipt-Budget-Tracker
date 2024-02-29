@@ -85,6 +85,41 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         margin: 15
     },
+    itemList: {
+
+        backgroundColor: '#EEE8E9',
+        // backgroundColor:'#ACECF7',
+        borderRadius: 6,
+        margin: 5,
+        zIndex: 0
+
+
+
+    },
+    // rowStyle: {
+    //     display: 'flex',
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-between',
+    //     gap: 20,
+    //     margin: 15,
+    //     // borderBottomWidth: 3,
+    //     // borderBottomColor: 'white',
+    //     zIndex: 0,
+
+    // },
+    firstRowStyle: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 20,
+        padding: 15,
+
+        zIndex: 0,
+    },
+    header:{
+        margin:10
+    }
+    
 
 })
 
@@ -95,6 +130,7 @@ export default function ReceiptDisplay({route, navigation}){
 
     const items = receipt?.items
 
+    console.log(items);
 
     useEffect(() => {
         console.log("in receipt display.js");
@@ -205,7 +241,7 @@ export default function ReceiptDisplay({route, navigation}){
                 <Text style={styles.headerText}>{receipt.merchant_name}</Text>
             </View>
 
-            <View style={styles.rowStyle}>
+            <View style={styles.firstRowStyle}>
                 <Text style={styles.itemHeader}>Qty</Text>
                 <Text style={styles.itemHeader}>Description</Text>
             </View>
@@ -215,14 +251,7 @@ export default function ReceiptDisplay({route, navigation}){
                 data={items}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
-                style={{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 6,
-                    margin: 5,
-                    zIndex: 0
-
-
-                }}
+                style={styles.itemList}
             />
             <View style={{
                 paddingTop: 80,
