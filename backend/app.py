@@ -40,9 +40,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('UTI')
 
 # 'sqlite:///bagel.db' 
 
-
-# 'postgres://avnadmin:AVNS_jyxFasH5pxShs3BwZkD@budget-receipt-db.a.aivencloud.com:25231/defaultdb?sslmode=require'
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
