@@ -45,6 +45,8 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
 
     const handleSubmit = async () => {
 
+        console.log(IP);
+
         if (answer.length === 0) {
             setBorderColor('#b33a3a')
             return;

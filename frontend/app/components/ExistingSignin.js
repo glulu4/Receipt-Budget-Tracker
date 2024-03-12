@@ -62,6 +62,7 @@ export default function ExistingSignin({route, navigation}){
 
 
 
+        console.log("ip", IP);
 
         fetch(`http://${IP}:5001/login`, {
             method: 'POST',

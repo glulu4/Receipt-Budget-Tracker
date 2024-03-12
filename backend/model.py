@@ -13,7 +13,7 @@ class User(db.Model):
     name_of_restaurant = db.Column(db.String(128), nullable=False)
 
     email = db.Column(db.String(100), unique=True, nullable=False) 
-    password_hash = db.Column(db.String(100))
+    password_hash = db.Column(db.String(300))
 
     receipts = db.relationship("Receipt", backref="user", lazy='dynamic')
     stores = db.relationship("Stores", backref="user", lazy='dynamic')
@@ -31,7 +31,8 @@ class User(db.Model):
             'last_name': self.last_name,
             'name_of_restaurant': self.name_of_restaurant,
             'email': self.email,
-            
+            "stores": [ store.to_dict() for store in self.stores],
+            "receipts": self.receipts.count() # 'AppenderQuery' has no len(), hence count()
         }
 
     def __init__(self, first_name, last_name, name_of_restaurant, email, password):
@@ -65,7 +66,7 @@ class Receipt(db.Model):
     _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     merchant_name = db.Column(db.String(100), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    items = db.relationship('Item', backref='receipt')
+    items = db.relationship('Item', backref='receipt', cascade='all, delete-orphan')
     subtotal = db.Column(db.Float, nullable=False)
     total_tax = db.Column(db.Float, nullable=False)
     total = db.Column(db.Float, nullable=False)

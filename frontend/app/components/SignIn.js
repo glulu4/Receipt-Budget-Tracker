@@ -127,11 +127,11 @@ export default function SignIn({route, navigation}){
                 </TouchableOpacity>
 
 
-                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                {/* <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }} onPress={onLogout}>
                         <Text style={styles.buttonText}>Logout</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
             </View>
 

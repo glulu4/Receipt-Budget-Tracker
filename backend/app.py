@@ -2,13 +2,11 @@ import datetime
 from flask import Flask, request, jsonify, make_response, session
 from sqlalchemy import extract, func
 from flask_cors import CORS
-import os
-import requests
-import zipfile
 import uuid
 
-from receipt import Receipt
+from sqlalchemy_utils import database_exists, create_database
 
+from receipt import Receipt # this is a class, not a db model :)
 
 from doc_intel_quickstart import analyze_receipts
 import json
@@ -18,17 +16,37 @@ from azure.ai.formrecognizer import DocumentAnalysisClient
 from datetime import datetime, date, time, timedelta
 from model import db, Receipt as ReceiptModel, Item, Stores, User
 
+from dotenv import load_dotenv
+import os
+import urllib.parse 
 
+import pyodbc
+from sqlalchemy import create_engine
+import urllib
+from urllib.parse import quote_plus
+
+load_dotenv()
 
 sessions = {}
 
 
 app = Flask(__name__)
-app.secret_key = "this is a terrible secret key" # for sessions
+app.secret_key = os.getenv("SESSION_KEY") # for sessions
 
 cors = CORS(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///receipt.db' 
+# SQLAlchemy connection string using SSL
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('UTI')
+
+# 'sqlite:///bagel.db' 
+
+
+# 'postgres://avnadmin:AVNS_jyxFasH5pxShs3BwZkD@budget-receipt-db.a.aivencloud.com:25231/defaultdb?sslmode=require'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
 db.init_app(app) # instead of passing 'app' to db = SQLAlchemy(app) in model.py
 
 
@@ -40,7 +58,6 @@ def initdb_command():
     with app.app_context():
         db.drop_all()
         db.create_all()  # creates table for all defined models
-        # addUser("gabby", "lulu", "email", "chipolte", "pass")
         print('Initialized the database.')
 
 
@@ -172,6 +189,82 @@ def add_receipt_to_db():
     else:
         return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
 
+@app.route('/delete-user/<_id>', methods=['DELETE'])
+def delete_user(_id):
+    user = User.query.filter_by( _id = _id ).first()
+
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify(message="User deleted"), 204
+    else:
+        return jsonify(message="User not found"), 404
+
+
+@app.route("/clear/", methods=["DELETE"])
+def clear_db():
+    try:
+        db.drop_all()
+        db.create_all()
+        return make_response("Database cleared successfully", 200)
+
+    except Exception as e:
+        return make_response("Failed to clear database", 500)
+
+
+# can pass in an email in the url like so get-specific-months-receipts?year=${year}
+# or filter for the current user in the session
+@app.route('/get-user-receipts')
+def get_user_receipts():
+    email = request.args.get('email')
+
+    if email:
+        user = User.query.filter_by(email=email).first()
+        if user:
+            receipts = [receipt.to_dict() for receipt in user.receipts]
+            return jsonify(receipts)
+        else:
+            return jsonify(message="User not found"), 404
+    else:
+        current_user = get_current_user()
+        if current_user:
+            receipts = [receipt.to_dict() for receipt in current_user.receipts]
+            return jsonify(receipts)
+        else:
+            return jsonify(message="No email passed in and no user in session"), 400
+
+
+@app.route('/delete-receipt/<_id>', methods=["DELETE"])
+def delete_receipt(_id):
+
+    receipt = ReceiptModel.query.filter_by(_id = _id).first()
+    if receipt:
+        db.session.delete(receipt)
+        db.session.commit()
+        print("Receipt deleted")
+        return jsonify(message="Receipt deleted"), 204
+    else:
+        return jsonify(message="Receipt not found"), 404
+
+
+
+
+
+
+
+
+
+
+@app.route('/get-all-users', methods=['GET'])
+def get_all_users():
+
+    all_users = User.query.all()
+
+    if all_users:
+        user_array = [user.to_dict() for user in all_users]
+        return jsonify(user_array)
+    else:
+        return jsonify({"message": "No users found"}), 404
 
 #DONE
 @app.route('/get-receipt', methods=['GET'])
@@ -440,8 +533,6 @@ def login():
 
 @app.route('/logout' ,methods=["POST"] )
 def logout():
-
-
     if "user" in session:
         session.pop('user', None)  # Clear the user from the session
         return jsonify(message = "Logged out"), 200

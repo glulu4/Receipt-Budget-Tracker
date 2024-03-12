@@ -40,8 +40,9 @@ function App() {
     // const ip = '10.0.0.155'; // home 
     // const ip = '10.0.0.153'; // aba 
 
-    const ip = '192.168.5.122' // kennet 
-    // const ip = '10.4.34.154' // cathy
+    const ip = '10.0.0.154' // kennet
+    // const ip = '10.0.0.153' 
+
 
     // const ip = '10.215.231.46' // panera 
 

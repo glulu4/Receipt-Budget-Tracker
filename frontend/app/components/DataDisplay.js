@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
         fontSize: 60,
         zIndex: 1, // Add this line
         fontWeight: '500',
+        
     },
     rowStyle: {
         display: 'flex',
@@ -340,7 +341,7 @@ export default function DataDisplay({ navigation, route }) {
 
 
         setIsTabBarVisible(true);
-        navigation.navigate("HomePage", { renderMessage: true})
+        navigation.navigate("MainApp")
 
 
     };
