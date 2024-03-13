@@ -18,12 +18,7 @@ from model import db, Receipt as ReceiptModel, Item, Stores, User
 
 from dotenv import load_dotenv
 import os
-import urllib.parse 
 
-import pyodbc
-from sqlalchemy import create_engine
-import urllib
-from urllib.parse import quote_plus
 
 load_dotenv()
 
