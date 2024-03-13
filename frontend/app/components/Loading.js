@@ -15,13 +15,13 @@ function Loading({ navigation, route }) {
 
     console.log("pjoojo", photos );
 
-    const IP = route.params.IP;
+    const backendAddress = route.params.backendAddress;
 
-    console.log("Ip", IP);
+    // console.log("Ip", IP);
 
     const startUploadSession = async () => {
         setShouldFetchTotal(true);
-        const response = await fetch(`http://${IP}:5001/start-upload-session`, {
+        const response = await fetch(`${backendAddress}/start-upload-session`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ function Loading({ navigation, route }) {
     const uploadImage = async (photo, sessionId, index) => {
         const binaryData = await RNFS.readFile(photo.path, 'base64');
         const binaryBlob = await (await fetch(`data:image/jpeg;base64,${binaryData}`)).blob();
-        const response = await fetch(`http://${IP}:5001/upload-image/${sessionId}/${index}`, {
+        const response = await fetch(`${backendAddress}/upload-image/${sessionId}/${index}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/octet-stream',
@@ -51,7 +51,7 @@ function Loading({ navigation, route }) {
 
     const getStores = async () => {
         try {
-            const response = await fetch(`http://${IP}:5001/get-stores`);
+            const response = await fetch(`${backendAddress}/get-stores`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -66,9 +66,15 @@ function Loading({ navigation, route }) {
     const processPhotos = async () => {
         try {
             const sessionId = await startUploadSession();
-            console.log("created id");
+
+            console.log("created id, id = ", sessionId);
             const uploadPromises = photos.map((photo, index) => uploadImage(photo, sessionId, index));
+            console.log("Here1");
             const results = await Promise.all(uploadPromises);
+            console.log("Here2");
+
+
+            console.log("results", results);
 
             console.log('All uploads complete:');
 

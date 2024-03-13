@@ -29,7 +29,7 @@ export default function ExistingSignin({route, navigation}){
 
     const [showErrorMsg, setShowErrorMsg] = useState(false)
 
-    const IP = route.params?.IP;
+    const backendAddress = route.params?.backendAddress;
 
 
     const handleSubmit = () => {
@@ -62,9 +62,9 @@ export default function ExistingSignin({route, navigation}){
 
 
 
-        console.log("ip", IP);
+        // console.log("ip", IP);
 
-        fetch(`http://${IP}:5001/login`, {
+        fetch(`${backendAddress}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

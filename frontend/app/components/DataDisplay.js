@@ -226,7 +226,7 @@ export default function DataDisplay({ navigation, route }) {
     const handleStoreSelect = (selectedStoreName) => {
         setStoreName(selectedStoreName);
     };
-    const IP = route.params.IP;
+    const backendAddress = route.params.backendAddress;
 
     // FOR TESTING add get store list and useffect here
     
@@ -251,7 +251,7 @@ export default function DataDisplay({ navigation, route }) {
 
         body = {"new_store": storeName}
 
-        fetch(`http://${IP}:5001/add-store`, {
+        fetch(`${backendAddress}/add-store`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -321,7 +321,7 @@ export default function DataDisplay({ navigation, route }) {
 
 
 
-        fetch(`http://${IP}:5001/add-to-db`, {
+        fetch(`${backendAddress}/add-to-db`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

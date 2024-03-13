@@ -44,7 +44,9 @@ function HomePage({ route, navigation }) {
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
 
-    const IP = route.params.IP;
+    const backendAddress = route.params.backendAddress;
+
+    // console.log("backendAddress", backendAddress);
 
 
 
@@ -230,7 +232,7 @@ function HomePage({ route, navigation }) {
 
 
         try {
-            const response = await fetch(`http://${IP}:5001/get-current-months-totals`);
+            const response = await fetch(`${backendAddress}/get-current-months-totals`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

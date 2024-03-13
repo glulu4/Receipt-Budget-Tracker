@@ -56,7 +56,7 @@ export default function SignIn({route, navigation}){
 
     const { shouldFetchTotal, setShouldFetchTotal, currentUser, setCurrentUser, isSignIn, setIsSignIn } = useGlobalContext()
 
-    const IP = route.params?.IP;
+    const backendAddress = route.params?.backendAddress;
 
 
 
@@ -71,7 +71,7 @@ export default function SignIn({route, navigation}){
 
     const onLogout = () => {
 
-        fetch(`http://${IP}:5001/logout`, {
+        fetch(`${backendAddress}/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,11 +127,11 @@ export default function SignIn({route, navigation}){
                 </TouchableOpacity>
 
 
-                {/* <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <TouchableOpacity style={{ flex: 1, backgroundColor: 'lightgray', borderRadius: 5, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }} onPress={onLogout}>
                         <Text style={styles.buttonText}>Logout</Text>
                     </TouchableOpacity>
-                </View> */}
+                </View>
 
             </View>
 

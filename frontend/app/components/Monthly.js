@@ -185,7 +185,7 @@ const Monthly = ({route, navigation}) => {
 
     const [totalOunces, setTotalOunces] = useState(0);
     const [taxableOz, setTaxableOz] = useState(0);
-    const IP = route.params.IP;
+    const backendAddress = route.params.backendAddress;
 
 
 
@@ -273,7 +273,7 @@ const Monthly = ({route, navigation}) => {
 
 
 
-        fetch(`http://${IP}:5001/get-specific-months-receipts?year=${year}&month=${month}`)
+        fetch(`${backendAddress}/get-specific-months-receipts?year=${year}&month=${month}`)
             .then(response => response.json())
             .then(data => {
                 console.log("dayta", data); // Process your data here

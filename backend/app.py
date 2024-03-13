@@ -55,6 +55,7 @@ def initdb_command():
 
 @app.route('/start-upload-session', methods=["POST"])
 def start_session():
+    print('Starting upload session')
     session_id = str(uuid.uuid4())
     sessions[session_id] = {'received': 0, 'total': request.json['total']}
     return jsonify({'session_id': session_id})
@@ -63,17 +64,21 @@ def start_session():
 @app.route('/upload-image/<session_id>/<index>', methods=['POST'])
 def upload_image(session_id, index):
 
+    print('In upload_image')
     receipt = None
     if session_id not in sessions:
         print("in session")
-        return jsonify({'error': 'Invalid session ID'}), 400
+        print("somehow .. session_id not in sessions ")
+        return jsonify(error_message='Invalid session ID'), 400
 
     image_data = request.data
     if not image_data:
-        return jsonify({'error': 'No image data received'}), 400
+        print("Image data not here lol")
+        return jsonify(error_message='No image data received'), 400
 
     # Initialize a list to store images if not already done
     if 'images' not in sessions[session_id]:
+
         sessions[session_id]['images'] = []
 
     # Add the current image to the session
@@ -99,8 +104,6 @@ def process_images(session_id):
         analyze(image, new_receipt)
 
     print(new_receipt)
-
-
     return new_receipt
 
 

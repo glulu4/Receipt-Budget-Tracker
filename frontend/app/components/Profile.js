@@ -6,10 +6,10 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 
 const Profile = ({route, navigation}) => {
-    const IP = route.params?.IP;
+    const backendAddress = route.params?.backendAddress;
 
 
-    console.log(IP);
+    // console.log("backendAddress", backendAddress);
     const { isSignIn, setIsSignIn, setCurrentUser, currentUser } = useGlobalContext()
 
 
@@ -67,7 +67,7 @@ const Profile = ({route, navigation}) => {
 
     const onLogout = () => {
 
-        fetch(`http://${IP}:5001/logout`, {
+        fetch(`${backendAddress}/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

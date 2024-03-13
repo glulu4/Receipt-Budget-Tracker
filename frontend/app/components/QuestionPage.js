@@ -15,7 +15,7 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
     const { isSignIn, setIsSignIn, setCurrentUser } = useGlobalContext()
 
     const [borderColor, setBorderColor] = useState('black')
-    const IP = route.params?.IP;
+    const backendAddress = route.params?.backendAddress;
 
 
     const [showErrorMsg, setShowErrorMsg] = useState(false)
@@ -45,7 +45,6 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
 
     const handleSubmit = async () => {
 
-        console.log(IP);
 
         if (answer.length === 0) {
             setBorderColor('#b33a3a')
@@ -90,7 +89,7 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
 
         }
         else{
-            fetch(`http://${IP}:5001/create-user`, {
+            fetch(`${backendAddress}/create-user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

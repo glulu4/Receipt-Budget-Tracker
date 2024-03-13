@@ -34,28 +34,18 @@ import ExistingSignin from './components/ExistingSignin';
 import { TabBarVisibilityProvider } from './components/TabBarVisibilityContext';
 
 import { useGlobalContext } from './components/TabBarVisibilityContext';
+import Config from 'react-native-config';
+
+
 
 function App() {
 
-    // const ip = '10.0.0.155'; // home 
-    // const ip = '10.0.0.153'; // aba 
 
-    const ip = '10.0.0.154' // kennet
-    // const ip = '10.0.0.153' 
+    const backendAddress = Config.REACT_APP_BACKEND_URL;
+    // const backendAddress = "http://10.0.0.154:5001"
 
+    console.log("backendAddress", backendAddress);
 
-    // const ip = '10.215.231.46' // panera 
-
-    // const ip = '10.0.0.153' // ellie b
-
-    // const ip = '192.168.1.210' // chabad
-
-    // const ip = '10.5.46.147'; // lawrence
-
-    // const ip = '10.215.142.252' // cathy 2
-
-
-    // const ip = '10.5.64.143' // WPU
     
     const HomeStack = createNativeStackNavigator();
     const ProfileStack = createNativeStackNavigator();
@@ -71,14 +61,14 @@ function App() {
     function SignInScreen(){
         return ( 
             <SignInStack.Navigator screenOptions={{ headerShown: false }} >
-                <SignInStack.Screen name="InitSignIn" component={SignIn} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="Q1" component={Q1} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="Q2" component={Q2} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="Q3" component={Q3} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="Q4" component={Q4} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="Q5" component={Q5} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="CreatingAccount" component={AccountLoading} initialParams={{ IP: ip }} />
-                <SignInStack.Screen name="ExistingSignin" component={ExistingSignin} initialParams={{ IP: ip }} />
+                <SignInStack.Screen name="InitSignIn" component={SignIn} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="Q1" component={Q1} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="Q2" component={Q2} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="Q3" component={Q3} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="Q4" component={Q4} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="Q5" component={Q5} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="CreatingAccount" component={AccountLoading} initialParams={{ backendAddress: backendAddress }} />
+                <SignInStack.Screen name="ExistingSignin" component={ExistingSignin} initialParams={{ backendAddress: backendAddress }} />
             </SignInStack.Navigator>
         )
     }
@@ -86,24 +76,22 @@ function App() {
     function HomeStackScreen() {
         return (
             <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-                <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }} />
+                <HomeStack.Screen name="HomePage" component={HomePage} initialParams={{ backendAddress: backendAddress }} />
                 {/* <HomeStack.Screen name="Receipts" component={Receipt} /> */}
 
                 <HomeStack.Screen name="CameraPage" component={CameraPage} screenOptions={{ gestureEnabled: false, headerShown: false }} />
-                <HomeStack.Screen name="LoadingPage" component={Loading} initialParams={{ IP: ip }} />
-                <HomeStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ IP: ip }} />
+                <HomeStack.Screen name="LoadingPage" component={Loading} initialParams={{ backendAddress: backendAddress }} />
+                <HomeStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ backendAddress: backendAddress }} />
             </HomeStack.Navigator>
         );
     }
     function MonthlyStackScreen() {
         return (
             <MonthlyStack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }} >
-                <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} initialParams={{ IP: ip }} options={{
+                <MonthlyStack.Screen name="MonthlyScreen" component={Monthly} initialParams={{ backendAddress: backendAddress }} options={{
                     gestureEnabled: false, // Disable swipe back gesture
                 }} />
-                {/* <MonthlyStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ IP: ip }} />
 
-                <MonthlyStack.Screen name="Dummy" component={Dummy} initialParams={{ IP: ip }} /> */}
                 {/* other screens in the profile stack */}
             </MonthlyStack.Navigator>
         );
@@ -121,7 +109,7 @@ function App() {
     function ProfileStackScreen() {
         return (
             <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
-                <ProfileStack.Screen name="ProfilePage" component={Profile} initialParams={{ IP: ip }} />
+                <ProfileStack.Screen name="ProfilePage" component={Profile} initialParams={{ backendAddress: backendAddress }} />
                 {/* other screens in the profile stack */}
             </ProfileStack.Navigator>
         );
@@ -166,19 +154,18 @@ function App() {
                  }}>
                 {isSignIn ? (
                     <>
-                        <RootStack.Screen name="MainApp" component={MainApp} initialParams={{ IP: ip }} />
-                        <RootStack.Screen name="LoadingPage" component={Loading} initialParams={{ IP: ip }} />
-                        <RootStack.Screen name="CameraPage" component={CameraPage} initialParams={{ IP: ip }} />
-                        <RootStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ IP: ip }}   />
+                        <RootStack.Screen name="MainApp" component={MainApp} initialParams={{ backendAddress: backendAddress }} />
+                        <RootStack.Screen name="LoadingPage" component={Loading} initialParams={{ backendAddress: backendAddress }} />
+                        <RootStack.Screen name="CameraPage" component={CameraPage} initialParams={{ backendAddress: backendAddress }} />
+                        <RootStack.Screen name="DataDisplayPage" component={DataDisplay} initialParams={{ backendAddress: backendAddress }}   />
 
-                        <RootStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ IP: ip }} />
+                        <RootStack.Screen name="ReceiptDisplay" component={ReceiptDisplay} initialParams={{ backendAddress: backendAddress }} />
 
-                        <RootStack.Screen name="Dummy" component={Dummy} initialParams={{ IP: ip }} />
-                        {/* <RootStack.Screen name="HomePage" component={HomePage} initialParams={{ IP: ip }} /> */}
+                        <RootStack.Screen name="Dummy" component={Dummy} initialParams={{ backendAddress: backendAddress }} />
                         {/* Other global screens can be added here */}
                     </>
                 ) : (
-                        <RootStack.Screen name="SignIn" component={SignInScreen} initialParams={{ IP: ip }}/>
+                        <RootStack.Screen name="SignIn" component={SignInScreen} initialParams={{ backendAddress: backendAddress }}/>
                 )}
             </RootStack.Navigator>
         </NavigationContainer>
