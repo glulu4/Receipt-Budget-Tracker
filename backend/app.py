@@ -247,15 +247,15 @@ def delete_receipt(_id):
 
 
 
-@app.route("/clear/", methods=["DELETE"])
+@app.route("/clear", methods=["DELETE"])
 def clear_db():
     try:
         db.drop_all()
         db.create_all()
-        return make_response("Database cleared successfully", 200)
+        return jsonify(msg="Database cleared successfully"), 200
 
     except Exception as e:
-        return make_response("Failed to clear database", 500)
+        return make_response(msg="Failed to clear database"), 500
 
 
 
