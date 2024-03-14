@@ -206,7 +206,7 @@ const TabBarComponent = ({ state, navigation, descriptors }) => {
                     // Extract URIs from all selected images
                     const imageUris = response.assets.map(asset => asset.uri);
                     setImageArray(imageUris); // Assuming setSelectedImages can handle an array of URIs
-                    console.log(imageUris);
+                    console.log("imageUris", imageUris);
 
                     const photos = imageUris.map( (photo, index ) => {
                         return {

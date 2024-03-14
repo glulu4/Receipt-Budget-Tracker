@@ -31,7 +31,8 @@ app.secret_key = os.getenv("SESSION_KEY") # for sessions
 cors = CORS(app)
 
 # SQLAlchemy connection string using SSL
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('UTI')
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///bagel.db' 
+#os.getenv('UTI')
 
 # 'sqlite:///bagel.db' 
 

@@ -44,7 +44,7 @@ function App() {
     const backendAddress = Config.REACT_APP_BACKEND_URL;
     // const backendAddress = "http://10.0.0.154:5001"
 
-    console.log("backendAddress", backendAddress);
+    // console.log("backendAddress", backendAddress);
 
     
     const HomeStack = createNativeStackNavigator();
@@ -116,7 +116,7 @@ function App() {
     }
 
 
-    console.log("isSignInp", isSignIn);
+    // console.log("isSignInp", isSignIn);
 
 
     const MainApp = () => {
