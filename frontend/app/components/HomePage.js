@@ -46,7 +46,7 @@ function HomePage({ route, navigation }) {
 
     const backendAddress = route.params.backendAddress;
 
-    // console.log("backendAddress", backendAddress);
+    console.log("backendAddress", backendAddress);
 
 
 

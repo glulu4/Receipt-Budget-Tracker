@@ -31,7 +31,8 @@ app.secret_key = os.getenv("SESSION_KEY") # for sessions
 cors = CORS(app)
 
 # SQLAlchemy connection string using SSL
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///bagel.db' 
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('UTI')
+#'sqlite:///bagel.db' 
 #os.getenv('UTI')
 
 # 'sqlite:///bagel.db' 
@@ -59,7 +60,7 @@ def start_session():
     print('Starting upload session')
     session_id = str(uuid.uuid4())
     sessions[session_id] = {'received': 0, 'total': request.json['total']}
-    
+    print("sessions: ", sessions)
     return jsonify(session_id=session_id)
 
 

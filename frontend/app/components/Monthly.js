@@ -274,13 +274,24 @@ const Monthly = ({route, navigation}) => {
 
 
         fetch(`${backendAddress}/get-specific-months-receipts?year=${year}&month=${month}`)
-            .then(response => response.json())
+            .then(response => {
+
+                if (!response.ok) {
+                    // This will catch HTTP status errors (e.g., 400, 401, 500)
+                    throw new Error(`Failed fetch receipts from specified date. Status: ${response.status}`);
+                }
+                response.json()
+            })
             .then(data => {
                 console.log("dayta", data); // Process your data here
+                if (!data){
+                    throw new Error(`Failed fetch receipts data is undefined`);
+
+                }
                 setReceipts(data.receipts)
 
-                let taxed_oz = data.oz.taxed_ounces
-                let total_oz = data.oz.total_ounces
+                let taxed_oz = data.oz?.taxed_ounces
+                let total_oz = data.oz?.total_ounces
                 setTotalOunces(total_oz)
                 setTaxableOz(total_oz - taxed_oz)
 
