@@ -30,6 +30,7 @@ function Loading({ navigation, route }) {
         });
 
         const data = await response.json();
+        console.log(data);
         return data.session_id;
     };
 

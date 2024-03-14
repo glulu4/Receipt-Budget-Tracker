@@ -58,7 +58,8 @@ def start_session():
     print('Starting upload session')
     session_id = str(uuid.uuid4())
     sessions[session_id] = {'received': 0, 'total': request.json['total']}
-    return jsonify({'session_id': session_id})
+    
+    return jsonify(session_id=session_id)
 
 
 @app.route('/upload-image/<session_id>/<index>', methods=['POST'])
