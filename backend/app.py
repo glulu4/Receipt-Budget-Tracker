@@ -199,15 +199,6 @@ def delete_user(_id):
         return jsonify(message="User not found"), 404
 
 
-@app.route("/clear/", methods=["DELETE"])
-def clear_db():
-    try:
-        db.drop_all()
-        db.create_all()
-        return make_response("Database cleared successfully", 200)
-
-    except Exception as e:
-        return make_response("Failed to clear database", 500)
 
 
 # can pass in an email in the url like so get-specific-months-receipts?year=${year}
