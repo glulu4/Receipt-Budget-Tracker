@@ -41,7 +41,7 @@ import Config from 'react-native-config';
 function App() {
 
 
-    // const backendAddress = "https://lionfish-app-inq3b.ondigitalocean.app";
+    const backendAddress = "https://lionfish-app-inq3b.ondigitalocean.app";
     // const backendAddress = "http://192.168.5.122:5001"
     //"http://10.4.2.130:5001"
 
