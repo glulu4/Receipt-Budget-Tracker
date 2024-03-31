@@ -32,6 +32,8 @@ cors = CORS(app)
 
 # SQLAlchemy connection string using SSL
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('UTI')
+'sqlite:///bagel.db' 
+os.getenv('UTI')
 #'sqlite:///bagel.db' 
 #os.getenv('UTI')
 
@@ -119,7 +121,13 @@ def add_receipt_to_db():
 
         receipt = request.get_json()
 
+        print(json.dumps(receipt, indent=4))  # This will print your JSON data formatted
+
+
         date = datetime.strptime(receipt['date'], '%Y-%m-%d').date()
+
+
+
 
         items = receipt['items']
         merchant_name = receipt['merchant_name']
@@ -127,6 +135,17 @@ def add_receipt_to_db():
         subtotal = receipt['subtotal']
         total = receipt['total']
         total_tax = receipt['total_tax']
+        store_id = receipt['store_id']
+
+
+        print(f"Items: {items}")
+        print(f"Merchant Name: {merchant_name}")
+        print(f"PA Tax Paid: {pa_tax_paid}")
+        print(f"Subtotal: {subtotal}")
+        print(f"Total: {total}")
+        print(f"Total Tax: {total_tax}")
+        print("User Id = ", current_user._id)
+        print(f"Store ID: {store_id}")
 
         if not merchant_name:
             merchant_name = "Store TBD"
@@ -139,7 +158,8 @@ def add_receipt_to_db():
             total_tax=total_tax,
             total=total, 
             pa_tax_paid=pa_tax_paid,
-            user_id = current_user._id
+            user_id = current_user._id,
+            store_id = store_id,
 
         )
         # Add Receipt to the session
@@ -408,7 +428,6 @@ def get_month_total_spend(year=None, month=None):
 def get_stores():
 
     current_user = get_current_user()
-
     if current_user:
 
         try:
@@ -418,9 +437,43 @@ def get_stores():
             return jsonify(stores=store_list), 200
         
         except Exception as e :
+            print("We errored in get stores " + str(e))
             return jsonify(error_message=str(e)), 500
     else:
         return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
+
+@app.route('/get-store-totals', methods=["GET"])
+def get_store_totals():
+    current_user = get_current_user()
+
+    print( current_user )
+
+    if current_user:
+
+        try:
+            stores = current_user.stores.all()
+            # store_list = [store.to_dict() for store in stores ]
+
+            if stores:
+                store_name_2_total = {}
+                for store in stores:
+                    total = sum(receipt.total for receipt in store.receipts.all())
+                    
+                    store_name_2_total[store.name] = total
+
+                return jsonify(store_name_2_total), 200
+
+            else:
+                return jsonify(msg="No stores"), 404
+
+        except Exception as e:
+            print("errors", str(e))
+            return jsonify(error_message=str(e)), 500
+
+    else:
+        return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
+
+
     
 #DONE
 @app.route('/add-store', methods=["POST"])
@@ -436,9 +489,10 @@ def add_new_store():
                 return jsonify(message="Store already exists."), 409  # 409 Conflict
 
             new_store = Stores(name=store_name, user_id=current_user._id)
+
             db.session.add(new_store)
             db.session.commit()
-            return jsonify(message="Store added successfully."), 201  # 201 Created
+            return jsonify(store_id=new_store._id, message="Store added successfully."), 201  # 201 Created
         
         except Exception as e:
             print("An error occurred while adding the store:", e)

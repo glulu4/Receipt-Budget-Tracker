@@ -5,6 +5,8 @@ import TabBarComponent from './TabBarComponent';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
 import * as ImagePicker from 'react-native-image-picker';
 import { useGlobalContext } from './TabBarVisibilityContext';
 
@@ -305,8 +307,8 @@ const TabBar = ({ state, navigation, descriptors }) => {
         const size = 24;
         switch (name) {
 
-            case 'settings':
-                return <Ionicons name='settings-outline' size={size} color={color}></Ionicons>;
+            case 'location':
+                return <Ionicons name='location-outline' size={27} color={color}></Ionicons>;
             case 'monthly':
                 return <Ionicons name='receipt-outline' size={size} color={color}></Ionicons>;
             case 'profile':

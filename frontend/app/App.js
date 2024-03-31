@@ -10,7 +10,7 @@ import CameraPage from './components/CameraPage';
 import Loading from './components/Loading';
 import DataDisplay from './components/DataDisplay';
 
-import Settings from './components/Settings';
+import Location from './components/Location';
 import Profile from './components/Profile';
 import Monthly from './components/Monthly';
 
@@ -41,15 +41,22 @@ import Config from 'react-native-config';
 function App() {
 
 
-    const backendAddress = Config.REACT_APP_BACKEND_URL;
-    // const backendAddress = "http://10.0.0.154:5001"
+    // const backendAddress = "https://lionfish-app-inq3b.ondigitalocean.app";
+    // const backendAddress = "http://192.168.5.122:5001"
+    //"http://10.4.2.130:5001"
 
-    // console.log("backendAddress", backendAddress);
+     // 'http://10.0.0.154:5001'
+    //"https://lionfish-app-inq3b.ondigitalocean.app"
+    // Config.FLASK_BACKEND_DO;
+    // Config.REACT_APP_BACKEND_URL;
+    // const backendAddress = "http://10.0.0.154:5000"
+
+    console.log("backendAddress", backendAddress);
 
     
     const HomeStack = createNativeStackNavigator();
     const ProfileStack = createNativeStackNavigator();
-    const SettingsStack = createNativeStackNavigator();
+    const LocationStack = createNativeStackNavigator();
     const MonthlyStack = createNativeStackNavigator();
     const Tab = createBottomTabNavigator();
     const SignInStack = createNativeStackNavigator();
@@ -97,12 +104,12 @@ function App() {
         );
     }
 
-    function SettingsStackScreen() {
+    function LocationScreenStack() {
         return (
-            <SettingsStack.Navigator screenOptions={{ headerShown: false }}>
-                <SettingsStack.Screen name="SettingsScreen" component={Settings} />
+            <LocationStack.Navigator screenOptions={{ headerShown: false }}>
+                <LocationStack.Screen name="Location-Screen" component={Location} initialParams={{ backendAddress: backendAddress }} />
                 {/* other screens in the profile stack */}
-            </SettingsStack.Navigator>
+            </LocationStack.Navigator>
         );
     }
 
@@ -133,7 +140,7 @@ function App() {
             tabBar={props => <TabBar {...props} />}>
                 <Tab.Screen name="Home" component={HomeStackScreen} />
                 <Tab.Screen name="Monthly" component={MonthlyStackScreen} />
-                <Tab.Screen name="Settings" component={SettingsStackScreen} />
+                <Tab.Screen name="Location" component={LocationScreenStack} />
                 <Tab.Screen name="Profile" component={ProfileStackScreen} />
 
             </Tab.Navigator>

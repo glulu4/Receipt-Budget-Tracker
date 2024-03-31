@@ -50,6 +50,8 @@ class Stores(db.Model):
     name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user._id'))
 
+    receipts = db.relationship("Receipt", backref="stores", lazy='dynamic')
+
     def __init__( self, name, user_id):
         self.name=name
         self.user_id = user_id
@@ -58,6 +60,7 @@ class Stores(db.Model):
         return {
             "id" : self._id,
             "name" : self.name,
+            "receipts": self.receipts.count()
         }
     
         
@@ -73,8 +76,9 @@ class Receipt(db.Model):
     pa_tax_paid = db.Column(db.Boolean, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user._id'))
+    store_id = db.Column(db.Integer, db.ForeignKey('stores._id'))
 
-    def __init__(self, merchant_name, date, subtotal, total_tax, total, pa_tax_paid, user_id):
+    def __init__(self, merchant_name, date, subtotal, total_tax, total, pa_tax_paid, user_id, store_id):
         self.merchant_name = merchant_name
         self.date = date
         self.subtotal = subtotal
@@ -82,6 +86,7 @@ class Receipt(db.Model):
         self.total = total
         self.pa_tax_paid = pa_tax_paid
         self.user_id = user_id
+        self.store_id = store_id
 
     def add_item(self, item):
         self.items.append(item)
@@ -97,6 +102,7 @@ class Receipt(db.Model):
             "total_tax" : self.total_tax,
             "total" : self.total,
             "pa_tax_paid" : self.pa_tax_paid,
+            "store_id" : self.store_id,
         }
 
 class Item(db.Model):

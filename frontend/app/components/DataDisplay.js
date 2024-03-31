@@ -136,85 +136,89 @@ export default function DataDisplay({ navigation, route }) {
     const [errorMsg, setErrorMsg] = useState("")
     const [drinkError, setDrinkError] = useState(false)
 
-
-
     const storeList = route.params?.storeList;
     const r = route.params?.receiptData;
 
-
-    console.log("r", r);
-
-    let receipt = null;
-    if (r) {
-
-        for (let item of r) {
-
-            if (!item.message) {
-                receipt = item
-            }
-        }
-    }
-    else {
-        receipt = t
-    }
-    if ( r.length > 1){
-        receipt = r[1];
-    }
-    else{
-        receipt = r[0];
-    }
-
-    // console.log("receipt", receipt);
-
-    let con = condenseList(receipt.items)
-    // console.log("condensed ", con);
-
-    // combine here lol
+    // console.log("r", r);
 
 
-    const [items, setItems] = useState( (con) ); // Assuming this will be populated from your data source
+    const receiptInfo = extractReceiptData(r)
+
+    // console.log("receiptInfo", receiptInfo);
+
+    let condensedItems = condenseList(receiptInfo.items)
+
+    const [items, setItems] = useState(condensedItems ); // Assuming this will be populated from your data source
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-
     const [ storeName, setStoreName] = useState("Store Name...")
-
     const { isTabBarVisible } = useGlobalContext();
     const { setIsTabBarVisible } = useGlobalContext();
-
-
+    const backendAddress = route.params.backendAddress;
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     // const [storeList, setStoreList] = useState([])
 
 
+    function extractReceiptData(receiptArray) {
+        const receiptData = receiptArray.find(obj => obj.hasOwnProperty('date'));
+
+        if (!receiptData) {
+            console.error("No receipt data found");
+            return null;
+        }
+
+        // Extracting required information
+        const { date, items, merchant_name, pa_tax_paid, subtotal, total, total_tax } = receiptData;
+
+        // console.log('Date:', date);
+        // console.log('Items:', items);
+        // console.log('Merchant Name:', merchant_name);
+        // console.log('PA Tax Paid:', pa_tax_paid);
+        // console.log('Subtotal:', subtotal);
+        // console.log('Total:', total);
+        // console.log('Total Tax:', total_tax);
+        return { date, items, merchant_name, pa_tax_paid, subtotal, total, total_tax };
+    }
+
     function condenseList(items) {
-        const condensedList = {};
+        try {
 
-        items.forEach(item => {
-            const { description, price, total_price, quantity } = item;
-            let individualCost = 0;
-            if (quantity === 1){
-                individualCost = total_price
-            }
-            else{
-                individualCost = price
-            }
-            // check for total_price and 
-            const key = `${description}_${individualCost}`;
+            const condensedList = {};
 
-            if (condensedList[key]) {
-                condensedList[key].quantity += item.quantity;
-                condensedList[key].num_oz += item.num_oz || 0; // Sum num_oz if defined
-                condensedList[key].price = individualCost
-                condensedList[key].total_price += total_price
-            } else {
-                condensedList[key] = { ...item }; // Copy the item
-                // delete condensedList[key].id_; // Remove the id_ property
-            }
-        });
+            items.forEach(item => {
+                const { description, price, total_price, quantity } = item;
+                let individualCost = 0;
+                if (quantity === 1) {
+                    individualCost = total_price
+                }
+                else {
+                    individualCost = price
+                }
+                // check for total_price and 
+                const key = `${description}_${individualCost}`;
 
-        return Object.values(condensedList);
+                if (condensedList[key]) {
+                    condensedList[key].quantity += item.quantity;
+                    condensedList[key].num_oz += item.num_oz || 0; // Sum num_oz if defined
+                    condensedList[key].price = individualCost
+                    condensedList[key].total_price += total_price
+                } else {
+                    condensedList[key] = { ...item }; // Copy the item
+                    // delete condensedList[key].id_; // Remove the id_ property
+                }
+            });
+
+            return Object.values(condensedList);
+            
+        } catch (error) {
+
+            console.log("Error from datadisplay: ", error);
+            navigation.navigate("MainApp")
+            
+        }
+
     }
 
 
@@ -226,7 +230,6 @@ export default function DataDisplay({ navigation, route }) {
     const handleStoreSelect = (selectedStoreName) => {
         setStoreName(selectedStoreName);
     };
-    const backendAddress = route.params.backendAddress;
 
     // FOR TESTING add get store list and useffect here
     
@@ -238,37 +241,45 @@ export default function DataDisplay({ navigation, route }) {
 
         for (const store of list) {
             if (store.name.toLowerCase() === storeName.toLowerCase()) {
-                return true;
+
+                return { found: true, storeId: store.id };
             }
         }
 
-        return false;
+        return { found: false, storeId: null };
     };
 
 
 
     const addStore2DB = async () => {
+        let storeId = null;
+        const body = { "new_store": storeName };
 
-        body = {"new_store": storeName}
+        try {
+            const response = await fetch(`${backendAddress}/add-store`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
 
-        fetch(`${backendAddress}/add-store`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-        }).then((response) => {
-            console.log(response)
-            return response.json();
-        })
-        // needed because above then returns
-        .then((result) => {
-            console.log(result);
-        })
-        .catch(() => {
-            console.log("Error posting new store");
-        });
-    }
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log("result", result);
+
+            // Extract the store_id from the result
+            storeId = result.store_id; // Adjusted based on your log structure
+        } catch (error) {
+            console.log("Error posting new store:", error);
+        }
+
+        return storeId; // This will now return the actual store ID or null if the request failed
+    };
+
 
     const submitData = async () => {
 
@@ -299,19 +310,28 @@ export default function DataDisplay({ navigation, route }) {
         }
 
         // if we dont have store, add it to DB
-        if ( !containsStore() ){
-            addStore2DB();
+        let storeId = null;
+        
+        let storeInDB = containsStore()
+        if ( !storeInDB.found ){
+
+            storeId = await addStore2DB();
+
+            console.log("?////////////////////////////////////////////////////////////////////////////////////");
+            console.log("storeId", storeId);
         }
         else{
             console.log("the store is already in the db jawns");
+            storeId = storeInDB.storeId
         }
 
 
 
 
         let body = {
-            ...receipt, // spread the receipt
+            ...receiptInfo, // spread the receipt
             merchant_name:storeName,
+            store_id: storeId, 
             items: items,
             pa_tax_paid: isEnabled,
 
@@ -481,19 +501,22 @@ export default function DataDisplay({ navigation, route }) {
             }}>
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Date: </Text>
-                    <Text style={styles.bottomData}>{formatDate(r[0].date)}</Text>
+                    <Text style={styles.bottomData}>{formatDate(receiptInfo.date)}</Text>
                 </View>
+
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Subtotal: </Text>
-                    <Text style={styles.bottomData}>${receipt.subtotal}</Text>
+                    <Text style={styles.bottomData}>${receiptInfo.subtotal}</Text>
                 </View>
+
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Total Tax: </Text>
-                    <Text style={styles.bottomData}>${receipt.total_tax}</Text>
+                    <Text style={styles.bottomData}>${receiptInfo.total_tax}</Text>
                 </View>
+
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>Total: </Text>
-                    <Text style={styles.bottomData}>${receipt.total}</Text>
+                    <Text style={styles.bottomData}>${receiptInfo.total}</Text>
                 </View>
                 <View style={styles.bottomRow}>
                     <Text style={styles.bottomPrefix}>PA Tax: </Text>

@@ -97,6 +97,8 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
                 body: JSON.stringify(updatedResponses),
             }).then((response) => {
 
+                console.log("response", response);
+
                 if ( response.ok ){
 
                     setCurrentUser({
