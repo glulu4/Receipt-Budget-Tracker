@@ -18,6 +18,7 @@ from model import db, Receipt as ReceiptModel, Item, Stores, User
 
 from dotenv import load_dotenv
 import os
+from flask_migrate import Migrate, upgrade as migrate_upgrade
 
 
 load_dotenv()
@@ -44,6 +45,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db.init_app(app) # instead of passing 'app' to db = SQLAlchemy(app) in model.py
+migrate = Migrate(app, db)
 
 
 
@@ -56,6 +58,20 @@ def initdb_command():
         db.create_all()  # creates table for all defined models
         print('Initialized the database.')
 
+
+@app.cli.command("upgrade_db")
+def upgrade_db_command():
+    # flask db migrate -m "initial migration"
+    #  flask db upgrade 
+    """
+    Apply database migrations.
+    """
+    with app.app_context():
+    # Applying the migrations to the database
+        migrate_upgrade()
+    
+    # Confirmation message
+        print("Database successfully upgraded with any pending migrations.")
 
 @app.route('/start-upload-session', methods=["POST"])
 def start_session():
