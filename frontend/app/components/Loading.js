@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { useGlobalContext } from './TabBarVisibilityContext';
+import { Spinner } from '@ui-kitten/components';
+
 
 import RNFS from 'react-native-fs';
 
@@ -51,40 +53,6 @@ function Loading({ navigation, route }) {
         }
     }
 
-    // const uploadImage = async (photo, sessionId, index) => {
-    //     try {
-    //         const binaryData = await RNFS.readFile(photo.path, 'base64');
-    //         const binaryBlob = await (await fetch(`data:image/jpeg;base64,${binaryData}`)).blob();
-
-    //         // Attempt to upload the image
-    //         const response = await fetch(`${backendAddress}/upload-image/${sessionId}/${index}`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/octet-stream',
-    //             },
-    //             body: binaryBlob,
-    //         });
-
-    //         // Before parsing the JSON, check if the response was ok
-    //         if (!response.ok) {
-    //             // This will catch HTTP status errors (e.g., 400, 401, 500)
-    //             throw new Error(`Failed to upload image. Status: ${response.status}`);
-    //         }
-
-    //         // If the response was ok, parse and return the JSON body
-    //         return await response.json();
-    //     } catch (error) {
-    //         // Log the error to the console or handle it as needed
-    //         console.error(`Error uploading image at index ${index}:`, error);
-
-    //         // Depending on how you want to handle errors, you might throw the error again
-    //         // or return a specific error object to be handled by the caller
-    //         throw error;
-    //     }
-    // };
-
-
-
     const uploadImage = async (photo, sessionId, index) => {
         const binaryData = await RNFS.readFile(photo.path, 'base64');
         const binaryBlob = await (await fetch(`data:image/jpeg;base64,${binaryData}`)).blob();
@@ -125,8 +93,7 @@ function Loading({ navigation, route }) {
         } catch (error) {
             console.log("WE are getting here");
             console.error('Error:', error);
-            // console.log("Error2", error.stack);
-            // console.log("Error3", error.name);
+
             console.log("Error4", error.message);
 
             console.log("\t" + error.toString());
@@ -149,7 +116,9 @@ function Loading({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <Spinner status='primary' size='giant' />
+
+            {/* <ActivityIndicator size="large" color="#0000ff" /> */}
         </View>
     );
 }

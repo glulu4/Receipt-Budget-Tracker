@@ -18,9 +18,10 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useGlobalContext } from './TabBarVisibilityContext';
 
-import Feather from 'react-native-vector-icons/Feather';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 // const fadeAnim = useRef(new Animated.Value(0)).current;  // Initial value for opacity: 0
 
@@ -62,25 +63,6 @@ function HomePage({ route, navigation }) {
 
 
 
-    // console.log("route.params.renderMessage", route.params.renderMessage);
-
-    // useEffect(() => {
-    //     if (route.params.renderMessage) {
-    //         setRenderMsg(true); // Show the message
-    //         fadeAnim.setValue(1); // Reset animation to visible state
-    //     }
-    // }, [route.params.renderMessage]);
-
-    // useEffect(() => {
-    //     // When showSuccessMessage is true, start the fade out animation
-    //     if (renderMsg) {
-    //         const timer = setTimeout(() => {
-    //             fadeOut();
-    //         }, 2000);
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [renderMsg]);
-
     useEffect(() => {
         setIsTabBarVisible(true)
 
@@ -94,17 +76,7 @@ function HomePage({ route, navigation }) {
         formatTotalSpend()
     }, [totalSpend])
 
-    const fadeOut = () => {
-        // Will change fadeAnim value to 0 in 5 seconds
-        Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 2500,
-            useNativeDriver: true,
-        }).start(() => {
-            setRenderMsg(false)
-        });
-        
-    };
+
 
 
 
@@ -209,7 +181,77 @@ function HomePage({ route, navigation }) {
         },
         icon: {
             marginTop: 50
+        },
+
+        displayBox:{
+            flex:0.5,
+            shadowColor: '#000000',
+            shadowOpacity: 0.05,
+            shadowOffset: {
+                width: 10,
+                height: 10,
+            },
+            backgroundColor: '#EACBD2',
+            borderRadius: 5,
+            height:120,
+            width:120
+        },
+        expenseBox:{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center', 
+
+
+        },
+        boxTitle:{
+            display: 'flex', 
+            flexDirection: 'row', 
+            flex: 1, 
+        }, 
+        nameStyle:{
+            fontSize: 95,
+            fontWeight: '400',
+        },
+        topContainer:{
+            display: 'flex',
+            alignItems: "flex-start",
+
+
+
+
+            position: 'absolute',
+            top: 0,
+
+        },
+        innerDisplayBox:{ 
+            display: 'flex', 
+            
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'space-around', 
+            margin: 20, 
+            flex: 1 
+        }, 
+        innerExpenseBox:{
+            flex: 0.6,
+            margin: 20,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            shadowColor: '#000000',
+            shadowOpacity: 0.05,
+            shadowOffset: {
+                width: 8,
+                height: 8,
+            },
+            backgroundColor: '#EACBD2',
+            borderRadius: 5,
+            // marginTop: 30,
+            height: 120,
+            width: 120,
         }
+
 
     });
 
@@ -285,54 +327,73 @@ function HomePage({ route, navigation }) {
 
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
-            <View style={{
-                display:'flex',
-                alignItems:"flex-start",
-               
-                
-                
-                
-                position:'absolute',
-                top:0,
-
-            }}>
+            <View style={styles.topContainer}>
+                <Text style={styles.nameStyle}>Hi {currentUser.firstName}</Text>
                 <Text style={{
-                    fontSize:90, 
-                    fontWeight:'400',
-                    fontFamily:'monospace'
-                }}>Hi {currentUser.firstName}</Text>
-                <Text style={{
-                    fontSize: 30,
+                    fontSize: 40,
                     fontWeight: '300',
+                    marginTop:10
                 }}>{formatDate()}</Text>
 
 
             </View>
 
-            {/* {renderMsg || route.params.renderMessage
-            ? 
-            <Animated.View style={styles.successModal}>
-                <Text style={{ color: "green", fontSize: 40, textAlign: 'center' }}>Success Message!</Text>
-                <Feather name="check" size={24} color="green" />
-            </Animated.View>
-            
-            : console.log("broski")} */}
+
             
 
            
 
             <View>
 
+                <View style={{display:'flex', flexDirection:'row', justifyContent:'center', gap:30}}>
 
-                {/* below ill have each categories spend total
-                    bar chart of each with a nice display, can click on each to expound
-                */}
+                    <View style={styles.displayBox}>
 
-                <Text style={{fontSize: 30}}>Total Oz: {totalOunces} oz</Text>
-                <Text style={{ fontSize: 30 }}>Taxable Oz: {taxableOz} oz</Text>
-                <Text style={{ fontSize: 30 }}>{months[(new Date()).getMonth()]}'s Expenses: {formatTotalSpend()}</Text>
+
+                        <View style={styles.innerDisplayBox}>
+                            <View style={styles.boxTitle}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Total OZ</Text>
+
+                                <MaterialCommunityIcons name='bottle-soda-classic-outline' size={20}/>
+                            </View>
+                            <Text style={{ fontWeight: "300", fontSize: 22 }}>{totalOunces} oz</Text>
+                        </View>
+                        
+                    </View>
+
+                    <View style={styles.displayBox}>
+                       
+                        <View style={styles.innerDisplayBox}>
+                            <View style={styles.boxTitle}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 20,  }}>Taxable OZ</Text>
+
+                                <MaterialIcons name='money-off' size={20} />
+                            </View>
+                            <Text style={{ fontWeight: "300", fontSize: 22 }}>{taxableOz} oz</Text>
+                        </View>
+
+                    </View>
+
+                </View>
+                
+
+
+
+
+                <View style={styles.expenseBox}>
+                    <View style={styles.innerExpenseBox}>
+                        <View style={{display:'flex', flexDirection:'row', gap:5 }}>
+                            <Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>{months[(new Date()).getMonth()]}'s Expenses</Text>
+
+                            <Ionicons name='cash-outline' size={20}/>
+                        </View>
+                        <Text style={{ fontWeight: "300", fontSize: 22 }}>{formatTotalSpend()}</Text>
+
+                    </View>
+                </View>
+
 
 
 
@@ -347,7 +408,7 @@ function HomePage({ route, navigation }) {
 
             
 
-        </View>
+        </SafeAreaView>
     );
 }
 

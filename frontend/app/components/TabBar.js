@@ -239,7 +239,7 @@ const TabBar = ({ state, navigation, descriptors }) => {
             selectionLimit: 3,
             mediaType: 'photo',
             includeBase64: false,
-            quality: 0.6,
+            quality: 0.5,
         };
 
         ImagePicker.launchImageLibrary(options, (response) => {

@@ -172,13 +172,6 @@ export default function DataDisplay({ navigation, route }) {
         // Extracting required information
         const { date, items, merchant_name, pa_tax_paid, subtotal, total, total_tax } = receiptData;
 
-        // console.log('Date:', date);
-        // console.log('Items:', items);
-        // console.log('Merchant Name:', merchant_name);
-        // console.log('PA Tax Paid:', pa_tax_paid);
-        // console.log('Subtotal:', subtotal);
-        // console.log('Total:', total);
-        // console.log('Total Tax:', total_tax);
         return { date, items, merchant_name, pa_tax_paid, subtotal, total, total_tax };
     }
 

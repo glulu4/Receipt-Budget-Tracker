@@ -28,6 +28,7 @@ export default function ExistingSignin({route, navigation}){
     const { isSignIn, setIsSignIn, setCurrentUser } = useGlobalContext()
 
     const [showErrorMsg, setShowErrorMsg] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     const backendAddress = route.params?.backendAddress;
 
@@ -74,6 +75,15 @@ export default function ExistingSignin({route, navigation}){
                 password: password
             }),
         }).then((response) => {
+
+
+            if (!response.ok) {
+                
+                setErrorMessage("Error Signing In")
+                setShowErrorMsg(true)
+                throw new Error(`HTTP error! status: ${response.status}`);
+                
+            }
             // console.log("response", response)
             return response.json();
         })
@@ -101,6 +111,7 @@ export default function ExistingSignin({route, navigation}){
             }
             else{
                 console.log("result", result);
+                setErrorMessage("Wrong Email or Password")
                 setShowErrorMsg(true)
                 return;
             }
@@ -204,7 +215,7 @@ export default function ExistingSignin({route, navigation}){
             </TouchableOpacity>
 
             <View>
-               { showErrorMsg && <Text style={styles.errorMsg}>Wrong email or password</Text>}
+               { showErrorMsg && <Text style={styles.errorMsg}>{errorMessage}</Text>}
             </View>
 
  

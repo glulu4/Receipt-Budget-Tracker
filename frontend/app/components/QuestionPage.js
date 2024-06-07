@@ -115,6 +115,12 @@ const QuestionPage = ({ qid, question, onAnswer, nextPage, navigation, responses
 
                 }
                 else{
+                    if (response.status == 409) {
+                        console.log("409");
+                        setErrMsg("Email already in use")
+                        setShowErrorMsg(true)
+                        
+                    }
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 // console.log(response)

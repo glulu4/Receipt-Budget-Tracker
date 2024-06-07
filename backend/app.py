@@ -32,8 +32,9 @@ app.secret_key = os.getenv("SESSION_KEY") # for sessions
 cors = CORS(app)
 
 # SQLAlchemy connection string using SSL
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('UTI')
-'sqlite:///bagel.db' 
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///bagel.db' 
+# os.getenv('UTI')
+# 'sqlite:///bagel.db' 
 os.getenv('UTI')
 #'sqlite:///bagel.db' 
 #os.getenv('UTI')
@@ -75,6 +76,8 @@ def upgrade_db_command():
 
 @app.route('/start-upload-session', methods=["POST"])
 def start_session():
+
+    
     print('Starting upload session')
     session_id = str(uuid.uuid4())
     sessions[session_id] = {'received': 0, 'total': request.json['total']}
@@ -458,12 +461,105 @@ def get_stores():
     else:
         return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
 
+@app.route('/get-specific-month-store-totals', methods=["GET"])
+def get_specific_months_store_totals():
+
+
+    year = request.args.get('year')
+    month = request.args.get('month')
+
+    current_user = get_current_user()
+    if current_user:
+
+        try:
+            stores = current_user.stores.all()
+
+            if stores:
+                store_name_2_total = {}
+                for store in stores:
+                    receipts = store.receipts.filter(
+                        extract('year', ReceiptModel.date) == year,
+                        extract('month', ReceiptModel.date) == month
+                    ).all()
+                    total = sum(receipt.total for receipt in receipts)
+                    
+                    store_name_2_total[store.name] = total
+
+                return jsonify(store_name_2_total), 200
+
+            else:
+                return jsonify(msg="No stores"), 404
+
+        except Exception as e:
+            print("errors", str(e))
+            return jsonify(error_message=str(e)), 500
+
+    else:
+        return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
+
+
+
+@app.route('/get-past-week-month-store-totals', methods=["GET"])
+def get_past_week_month_store_totals():
+
+
+
+
+    option = request.args.get('option', type=int)
+
+    current_user = get_current_user()
+    if current_user:
+
+        try:
+            stores = current_user.stores.all()
+
+            if stores:
+                store_name_2_total = {}
+                for store in stores:
+                    receipts = None
+
+                    # past week
+                    if option == 0:
+                        one_week_ago = datetime.now() - timedelta(weeks=1)
+                        receipts = store.receipts.filter(
+                            ReceiptModel.date >= one_week_ago
+                        ).all()
+                    # past month
+                    elif option == 1:
+                        end_date = datetime.now()
+                        start_date = end_date - timedelta(days=30)  # Adjust based on how you define a month
+
+                        # Filter receipts within this date range
+                        receipts = store.receipts.filter(
+                            ReceiptModel.date >= start_date,
+                            ReceiptModel.date < end_date
+                        ).all()
+                    
+                    else:
+                        pass
+                        # maybe throw error later if in mode
+
+
+                    total = sum(receipt.total for receipt in receipts)
+                    
+                    store_name_2_total[store.name] = total
+
+                return jsonify(store_name_2_total), 200
+
+            else:
+                return jsonify(msg="No stores"), 404
+
+        except Exception as e:
+            print("errors", str(e))
+            return jsonify(error_message=str(e)), 500
+
+    else:
+        return jsonify(error_message="User authentication failed."), 401  # 401 Unauthorized
+
+
 @app.route('/get-store-totals', methods=["GET"])
 def get_store_totals():
     current_user = get_current_user()
-
-    print( current_user )
-
     if current_user:
 
         try:
